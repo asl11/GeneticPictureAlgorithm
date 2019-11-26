@@ -1,0 +1,20 @@
+{
+  "itemCount": 2,
+  "subtotal": "$15.50",
+  "items":[
+    {
+      "title": "The Big Book of Foo",
+      "description": "Bestselling book of Foo by A.N. Other",
+      "imageUrl": "/images/books/12345.gif",
+      "price": "$10.00",
+      "qty": 1
+    },
+    {
+      "title": "Javascript Pocket Reference",
+      "description": "Handy pocket-sized reference for the Javascript language",
+      "imageUrl": "/images/books/56789.gif",
+      "price": "$5.50",
+      "qty": 2
+    }
+  ]
+}

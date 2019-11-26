@@ -1,0 +1,48 @@
+{
+  "authors": [
+    {
+      "name": "Alice Action",
+      "email": "alice@rice.edu"
+    },
+    {
+      "name": "Bob Bigbooté",
+      "email": "bob@rice.edu"
+    },
+    {
+      "name": "Charlie Chancery",
+      "email": "charlie@rice.edu"
+    },
+    {
+      "name": "Dorothy Danger",
+      "email": "dorothy@rice.edu"
+    },
+    {
+      "name": "Eve Ebullience",
+      "email": "eve@rice.edu"
+    }
+  ],
+  "articles": [
+    {
+      "title": "Rice Owls Win Superbowl, Surprised NFL Fans React",
+      "authors": [
+        "alice@rice.edu",
+        "bob@rice.edu"
+      ],
+      "body": "In a sports upset few could have imagined, the Rice Owls defeated the New England Patriots 34-7 in the Superbowl."
+    },
+    {
+      "title": "Rice Band Deflated Footballs",
+      "authors": [
+        "bob@rice.edu"
+      ],
+      "body": "Rice bandmembers thought they were just making fun of Deflategate, but their prank somehow propelled the Owls to victory."
+    },
+    {
+      "title": "North Servery Receives Three Michelin Stars",
+      "authors": [
+        "eve@rice.edu"
+      ],
+      "body": "Rice president David Leebron congratulated the servery on its culinary accomplishments. Said one student, \"Sure, it's an impressive win, and I never knew ramen could be so good, but it seems a bit much when they put gold leaf in everything.\""
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+# git ls-files --others --exclude-from=.git/info/exclude
+# Lines that start with '#' are comments.
+*.class
+build
+out
+.gradle
+.idea
+*.iml
+*.swp

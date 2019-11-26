@@ -1,0 +1,81 @@
+/*
+ * This code is part of Rice Comp215 and is made available for your
+ * use as a student in Comp215. You are specifically forbidden from
+ * posting this code online in a public fashion (e.g., on a public
+ * GitHub repository) or otherwise making it, or any derivative of it,
+ * available to future Comp215 students. Violations of this rule are
+ * considered Honor Code violations and will result in your being
+ * reported to the Honor Council, even after you've completed the
+ * class, and will result in retroactive reductions to your grade. For
+ * additional details, please see the Comp215 course syllabus.
+ */
+
+body {
+  font-family: "Roboto", "Helvetica Neue", Helvetica, Arial;
+}
+html, body {
+  width: 100%;
+  height: 100%;
+}
+#wrapper-wrapper {
+  position: absolute;
+  bottom: 100px;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+#content-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  padding: 10px;
+  text-align: center;
+
+  // For a dark styling, add:
+  //background-color: #2B2B2B;
+  //color: #ffffff;
+  // then change the background color in #footer below
+}
+#footer {
+  position: absolute;
+  bottom: 0;
+  height: 100px;
+  width: 100%;
+  background-color: #2196F3;    // Dark: #3C3E44
+}
+.item {
+  position: relative;
+  display: inline-block;
+}
+.item img {
+  margin: 9px;
+}
+.item .selected {
+  margin: 3px;
+  border: 6px solid #FF4081;
+}
+.zoom-btn {
+  position: absolute;
+  left: 12px;
+  bottom: 6px;
+  opacity: 0;
+}
+.geno-btn {
+  position: absolute;
+  right: 12px;
+  bottom: 6px;
+  opacity: 0;
+}
+span {
+  cursor: pointer;
+}
+#mui-overlay {
+  text-align: center;
+}
+#mui-overlay img {
+  cursor: pointer;
+  border: 6px solid white;
+}

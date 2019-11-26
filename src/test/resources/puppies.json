@@ -1,0 +1,28 @@
+{
+  "puppies": {
+    "Alice": {
+      "age": 10,
+      "color": "grey",
+      "hat": {
+        "color": "green",
+        "style": "bowler"
+      }
+    },
+    "Bob": {
+      "age": 4,
+      "color": "brown",
+      "hat": {
+        "color": "orange",
+        "style": "trilby"
+      }
+    },
+    "Charlie": {
+      "age": 7,
+      "color": "white",
+      "hat": {
+        "color": "blue",
+        "style": "fedora"
+      }
+    }
+  }
+}

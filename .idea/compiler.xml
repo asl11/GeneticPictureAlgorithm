@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <option name="DEFAULT_COMPILER" value="error-prone" />
+    <wildcardResourcePatterns />
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="comp215-code.main" target="11" />
+      <module name="comp215-code.test" target="11" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="ErrorProneCompilerSettings">
+    <option name="ADDITIONAL_OPTIONS_STRING" value="-XDcompilePolicy=byfile -Xlint:all -Xlint:-serial -Xlint:-processing -Xlint:-deprecation -Xep:UnusedVariable:OFF -Xep:UnusedMethod:OFF" />
+  </component>
+</project>
