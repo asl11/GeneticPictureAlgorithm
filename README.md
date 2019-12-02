@@ -14,9 +14,9 @@ _Student 1 name_: Joshua Dong
 
 _Student 1 NetID_: jd54
 
-_Student 2 name_: Dan WALLACH
+_Student 2 name_: Alex Li
 
-_Student 2 NetID_: dwallach
+_Student 2 NetID_: asl11
 
 Your NetID is typically your initials and a numeric digit. That's
 what we need here.
