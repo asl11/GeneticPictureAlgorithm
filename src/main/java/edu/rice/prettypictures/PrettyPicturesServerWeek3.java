@@ -12,16 +12,24 @@
 
 package edu.rice.prettypictures;
 
+import static edu.rice.image.Images.imageToPng;
 import static edu.rice.json.Builders.jobject;
 import static edu.rice.json.Builders.jpair;
+import static edu.rice.util.Performance.nanoBenchmarkVal;
+import static edu.rice.util.Strings.stringToOptionInteger;
+import static edu.rice.util.Strings.stringToUTF8;
 import static edu.rice.web.Utils.jsonSparkExceptionHandler;
 import static edu.rice.web.Utils.launchBrowser;
+import static spark.Spark.get;
 import static spark.Spark.post;
 import static spark.Spark.redirect;
 import static spark.Spark.staticFileLocation;
 
 import edu.rice.autograder.annotations.GradeCoverage;
 import edu.rice.util.Log;
+import io.vavr.collection.List;
+import io.vavr.collection.Map;
+import io.vavr.collection.Seq;
 
 /**
  * Web server for Pretty Pictures. "Run" this and it will launch your browser with our
@@ -41,6 +49,14 @@ import edu.rice.util.Log;
 @GradeCoverage(project = "PP3", exclude = true)
 public class PrettyPicturesServerWeek3 {
   private static final String TAG = "PrettyPicturesServerWeek3";
+  private static int testNumber = 1; // mutated by the /test route
+  private static Seq<GeneTree> testGenes = List.empty(); // mutated by the /test route
+  private static int testGenesLength = 1; // mutated by the /test route
+
+  private static int totalGenerationNumber = 0; //mutated by the /test route
+  private static int currentGenerationNumber = 0; //mutated by the /test route
+  private static Seq<Seq<GeneTree>> stateRecorder = List.empty();
+
 
   /** Main entry point for the PrettyPictures web server. Args are ignored. */
   public static void main(String[] args) {
@@ -63,6 +79,70 @@ public class PrettyPicturesServerWeek3 {
      */
 
     // TODO: implement this handler
+    get(
+        "/image/gen/:gen/img/:img/height/:height/width/:width/",
+        (request, response) -> {
+          final var params = request.params();
+          final var genNum =
+              stringToOptionInteger(params.get(":gen"))
+                  .onEmpty(() -> Log.e(TAG, "failed to decode generation number: " + request.url()))
+                  .getOrElse(0);
+          final var imageNum =
+              stringToOptionInteger(params.get(":img"))
+                  .onEmpty(
+                      () -> Log.e(TAG, () -> "failed to decode image number: " + request.url()))
+                  .getOrElse(0);
+          final var width =
+              stringToOptionInteger(params.get(":width"))
+                  .onEmpty(() -> Log.e(TAG, () -> "failed to decode image width: " + request.url()))
+                  .getOrElse(1);
+          final var height =
+              stringToOptionInteger(params.get(":height"))
+                  .onEmpty(
+                      () -> Log.e(TAG, () -> "failed to decode image height: " + request.url()))
+                  .getOrElse(1);
+          //TODO: - Bad Requests, check this again
+          if (genNum < 0 || genNum >= stateRecorder.length() || imageNum < 0 || imageNum >= stateRecorder.get(genNum).length()) {
+            Log.e(TAG, () -> "bogus generation/image (" + genNum + "/" + imageNum + ")");
+            response.status(300); // error!
+            return stringToUTF8("Bad arguments");
+          }
+
+          generationNumber = genNum;
+//          //Check if it is the first generation
+//          if (genNum.equals(0)) {
+//            //Construct a random tree up to a certain depth
+//
+//          } else if (genNum > 0) {
+//            //genNum is greater than 0
+//
+//          }
+
+          var results =
+              nanoBenchmarkVal(
+                  () -> testGenes.get(imageNum).toImageFunction().toImage(width, height));
+          Log.iformat(
+              TAG,
+              "rendered gen: %d, image: %02d (%dx%d), time: %.3f ms (%.3f μs/pixel)",
+              genNum,
+              imageNum,
+              width,
+              height,
+              results._1 / 1_000_000.0,
+              results._1 / (1_000.0 * width * height));
+
+          return imageToPng(results._2)
+              .map(
+                  imageBytes -> {
+                    response.type("image/png");
+                    return imageBytes;
+                  })
+              .getOrElse(
+                  () -> {
+                    response.status(300); // error!
+                    return stringToUTF8("Internal failure");
+                  });
+        });
 
     /*
      * POST /test/:number
@@ -74,6 +154,31 @@ public class PrettyPicturesServerWeek3 {
      */
 
     // TODO: implement this handler
+    post(
+        "/test/:number",
+        (request, response) -> {
+          testNumber =
+              stringToOptionInteger(request.params().get(":number"))
+                  .onEmpty(() -> Log.e(TAG, () -> "failed to decode test number: " + request.url()))
+                  .getOrElse(1);
+
+          switch (testNumber) {
+            case 4:
+            case 3:
+
+            case 2:
+              // regenerate every time, makes testing a little easier
+              testGenes = TestGenesWeek2.randomTrees(50);
+              break;
+            case 1:
+            default:
+              //testGenes = week2db.getGenes();
+              break;
+          }
+          testGenesLength = testGenes.length();
+
+          return customJsonResponse(1, 0, testGenesLength);
+        });
 
     /*
      * GET /string/gen/:gen/img/:img/
@@ -88,6 +193,9 @@ public class PrettyPicturesServerWeek3 {
      * This handler is used to initialize the breeder client with information about the server.
      * Return a JSON response as in POST /test/.
      */
+
+    //Good Case, but what about bad case where either no generation or no images to generation?
+    get("/client-init/", (request, response) -> { return customJsonResponse( totalGenerationNumber, currentGenerationNumber,testGenesLength); });
 
     // TODO: implement this handler
 
