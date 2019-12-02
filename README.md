@@ -10,9 +10,9 @@ This three-week long project will take place in
 Please edit _README.md_ and replace your instructor's name and NetID with your own:
 (In future weeks, we'll have more things for you to do here.)
 
-_Student 1 name_: Dan WALLACH
+_Student 1 name_: Joshua Dong
 
-_Student 1 NetID_: dwallach
+_Student 1 NetID_: jd54
 
 _Student 2 name_: Dan WALLACH
 
