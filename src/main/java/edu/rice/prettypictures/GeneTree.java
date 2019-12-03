@@ -461,6 +461,8 @@ public class GeneTree {
   private GeneTree mutateTreeHelper(int timesLeft) {
     if (timesLeft == 0) {
       return this;
+    } else {
+      return this.mutateTree().mutateTreeHelper(timesLeft - 1);
     }
   }
 
