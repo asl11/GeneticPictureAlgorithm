@@ -27,9 +27,11 @@ import static spark.Spark.staticFileLocation;
 
 import edu.rice.autograder.annotations.GradeCoverage;
 import edu.rice.util.Log;
+import edu.rice.vavr.Sequences;
 import io.vavr.collection.List;
 import io.vavr.collection.Map;
 import io.vavr.collection.Seq;
+import javax.sound.midi.Sequence;
 
 /**
  * Web server for Pretty Pictures. "Run" this and it will launch your browser with our
@@ -108,7 +110,7 @@ public class PrettyPicturesServerWeek3 {
             return stringToUTF8("Bad arguments");
           }
 
-          generationNumber = genNum;
+          currentGenerationNumber = genNum;
 //          //Check if it is the first generation
 //          if (genNum.equals(0)) {
 //            //Construct a random tree up to a certain depth
@@ -195,7 +197,10 @@ public class PrettyPicturesServerWeek3 {
      */
 
     //Good Case, but what about bad case where either no generation or no images to generation?
-    get("/client-init/", (request, response) -> { return customJsonResponse( totalGenerationNumber, currentGenerationNumber,testGenesLength); });
+
+    get("/client-init/", (request, response) -> {
+      //if (bad case) {call post reset} else {}
+    return customJsonResponse( totalGenerationNumber, currentGenerationNumber,testGenesLength); });
 
     // TODO: implement this handler
 
@@ -205,6 +210,19 @@ public class PrettyPicturesServerWeek3 {
      * Reset the stored generations to a new, randomly generated first generation with :count images.
      * Return a JSON response as in POST /test/.
      */
+    post("/reset/:count/", (request, response) -> {
+          var count =
+              stringToOptionInteger(request.params().get(":countr"))
+                  .onEmpty(() -> Log.e(TAG, () -> "failed to decode count: " + request.url()))
+                  .getOrElse(1);
+          stateRecorder = List.of() ;//Construct random tree of count images
+          // reset totalGenerationNumber, currentGenerationNumber, testGenesLength
+          totalGenerationNumber = 1;
+          currentGenerationNumber = 0;
+          testGenesLength = count;
+          return customJsonResponse( totalGenerationNumber, currentGenerationNumber,testGenesLength);
+        }
+        );
 
     // TODO: implement this handler
 
