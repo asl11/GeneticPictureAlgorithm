@@ -175,14 +175,14 @@ class GeneTreeTest {
     for (int i = 0; i < 10; i++) {
       var bredtree = rt.crossBreed(rt2);
       var mutated = rt.mutateNode();
-//      System.out.println(rt);
-//      System.out.println("================");
-//      System.out.println(rt2);
-//      System.out.println("================");
-//      System.out.println(bredtree);
-//      System.out.println("================");
-//      System.out.println(mutated);
-//      System.out.println("================");
+      System.out.println(rt);
+      System.out.println("================");
+      System.out.println(rt2);
+      System.out.println("================");
+      System.out.println(bredtree);
+      System.out.println("================");
+      System.out.println(mutated);
+      System.out.println("================");
       System.out.println(mutated.equals(rt));
       System.out.println(GeneTree.of(bredtree.toJson()).isDefined());
       System.out.println(GeneTree.of(mutated.toJson()).isDefined());
