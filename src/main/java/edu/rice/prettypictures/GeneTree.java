@@ -459,7 +459,9 @@ public class GeneTree {
   }
 
   private GeneTree mutateTreeHelper(int timesLeft) {
-    if (timesLeft == 0)
+    if (timesLeft == 0) {
+      return this;
+    }
   }
 
 
