@@ -90,7 +90,6 @@ public class GeneTree {
   // discovered immediately during GeneTree construction rather than
   // later on when we're rendering images.
 
-  private double percentMutation = 0.25;
   private Random random = new Random();
   private final Allele gene;
   private final Seq<GeneTree> children;
@@ -455,14 +454,15 @@ public class GeneTree {
   // it, using the method above.
 
   public GeneTree mutateTree() {
+    double percentMutation = 0.25;
     return mutateTreeHelper((int) (percentMutation * this.numNodes()));
   }
 
   private GeneTree mutateTreeHelper(int timesLeft) {
-    if (timesLeft == 0) {
+    if (timesLeft < 0) {
       return this;
     } else {
-      return this.mutateTree().mutateTreeHelper(timesLeft - 1);
+      return this.mutateNode().mutateTreeHelper(timesLeft - 1);
     }
   }
 
