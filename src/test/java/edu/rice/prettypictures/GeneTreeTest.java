@@ -24,6 +24,7 @@ import static edu.rice.prettypictures.RgbColor.color;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
+import edu.rice.util.Log;
 import io.vavr.Tuple;
 import io.vavr.collection.List;
 import io.vavr.collection.Seq;
@@ -89,6 +90,7 @@ class GeneTreeTest {
         .map(ot -> dynamicTest(ot._1, ot._2::isDefined));
   }
 
+
   @TestFactory
   Seq<DynamicTest> testJson() {
     var testTrees =
@@ -106,12 +108,14 @@ class GeneTreeTest {
                         constantNumberTree(1.0))))
             .map(Option::get);
 
+
     return testTrees.map(
         tree ->
             dynamicTest(
                 tree.toString(),
                 () -> {
                   var json = tree.toJson();
+                  System.out.println(json.toString());
                   var reconstructed = GeneTree.of(json).get();
 
                   // JSON should be the same
@@ -146,5 +150,43 @@ class GeneTreeTest {
                   assertEquals(gene, GeneTree.of(gene.toJson()).get());
                   assertEquals(gene.hashCode(), GeneTree.of(gene.toJson()).get().hashCode());
                 }));
+  }
+
+  @Test
+  void testLenses() {
+    final var possibleGenes =
+        // Unlike the code in we use in production, where we want to keep going if we have
+        // an error, here if there's an error this will simply throw an exception and the test
+        // will fail. That's fine.
+        parseJsonObject(readResource("prettypictures-week2.json").get())
+            .get()
+            .apply("testGenes")
+            .asJArray()
+            .getSeq();
+    var rt = RandomGeneTree.randomTree(5);
+    var rt2 = RandomGeneTree.randomTree(2);
+    var rtL = rt.getRandomLens();
+    var x = rtL._2().get(rt);
+
+//    System.out.println(rt.toJson().toIndentedString());
+//    System.out.println("================");
+//    System.out.println(x.map(tree -> tree.toJson().toIndentedString()));
+
+    for (int i = 0; i < 10; i++) {
+      var bredtree = rt.crossBreed(rt2);
+      var mutated = rt.mutateNode();
+//      System.out.println(rt);
+//      System.out.println("================");
+//      System.out.println(rt2);
+//      System.out.println("================");
+//      System.out.println(bredtree);
+//      System.out.println("================");
+//      System.out.println(mutated);
+//      System.out.println("================");
+      System.out.println(mutated.equals(rt));
+      System.out.println(GeneTree.of(bredtree.toJson()).isDefined());
+      System.out.println(GeneTree.of(mutated.toJson()).isDefined());
+      System.out.println();
+    }
   }
 }

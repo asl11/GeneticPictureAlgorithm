@@ -27,10 +27,15 @@ import static io.vavr.control.Option.none;
 import static io.vavr.control.Option.some;
 
 import edu.rice.json.Value;
+import edu.rice.lens.Lens;
 import io.vavr.Lazy;
+import io.vavr.Tuple;
+import io.vavr.Tuple2;
 import io.vavr.collection.List;
 import io.vavr.collection.Seq;
 import io.vavr.control.Option;
+import java.awt.Color;
+import java.util.Random;
 import java.util.function.Supplier;
 
 /**
@@ -85,6 +90,8 @@ public class GeneTree {
   // discovered immediately during GeneTree construction rather than
   // later on when we're rendering images.
 
+  private double percentMutation = 0.25;
+  private Random random = new Random();
   private final Allele gene;
   private final Seq<GeneTree> children;
   private final Supplier<ImageFunction> imageFunctionMemo; // lazy: we only compute it once
@@ -370,21 +377,91 @@ public class GeneTree {
   //////////////////////////////////////////////////// Here begins the week 3 section
 
   ///////////// Step 1: Build getters and setters for the gene, and for the children.
+  public Allele getGene() {
+    return this.gene;
+  }
+
+  public Seq<GeneTree> getChildren() {
+    return this.children;
+  }
+
+  public GeneTree setGene(Allele input) {
+    return new GeneTree(input, this.children);
+  }
+
+  public GeneTree setChildren(Seq<GeneTree> children) {
+    GeneTree randchild = children.get(random.nextInt(children.length()));
+    int index = random.nextInt(this.children.length());
+    Seq<GeneTree> newchildren = this.children.replace(this.children.get(index),randchild);
+    return new GeneTree(this.gene, newchildren);
+  }
 
   ///////////// Step 2: Build lenses that can compose to allow getting/setting/updating deep into a
   // GeneTree.
 
+  public final Lens<GeneTree, Allele> geneLens = Lens.lens(GeneTree::getGene,
+      GeneTree::setGene);
+
+  public final Lens<GeneTree, Seq<GeneTree>> childrenLens = Lens.lens(GeneTree::getChildren,
+      GeneTree::setChildren);
+
   ///////////// Step 3: Build a getRandomLens() function that will point to a valid GeneTree within
   // "this" current GeneTree.
+
+  /*
+  getRandomLens return a tuple of lenses, where the first element is a genelens and the second element
+  is a childrenlens
+   */
+  public Tuple2<Lens<GeneTree, Allele>, Lens<GeneTree, Seq<GeneTree>>> getRandomLens() {
+    var json = this.toJson();
+    return this.children.length() != 0
+        ? getRandomLensHelper(json)
+        : Tuple.of(geneLens,childrenLens);
+  }
+
+  private Tuple2<Lens<GeneTree, Allele>, Lens<GeneTree, Seq<GeneTree>>> getRandomLensHelper(Value input) {
+    //System.out.println(input);
+    Seq<Value> inputList = input.asJArray().getSeq();
+    int index = random.nextInt(inputList.length());
+    if (!inputList.get(index).asJArrayOption().isDefined()) {
+      GeneTree temp = GeneTree.of(input).get();
+      //System.out.println(temp);
+      return Tuple.of(temp.geneLens, temp.childrenLens);
+    } else {
+      return getRandomLensHelper(inputList.get(index));
+    }
+  }
 
   ///////////// Step 4: Build a crossBreed() method that uses random lenses to implement Karl Sims's
   // cut-and-paste cross-breeding.
 
+  public GeneTree crossBreed(GeneTree other) {
+    var thisrl = this.getRandomLens();
+    var otherrl = other.getRandomLens();
+    return thisrl._2().set(this,otherrl._2().get(other));
+  }
+
+
   ///////////// Step 5: Build a mutateNode() method that replaces the current gene with another,
   // keeping the original children. Again, use your random lens.
 
+  public GeneTree mutateNode() {
+    var thisrl = this.getRandomLens();
+    int childReq = thisrl._1().get(this).numChildren();
+    return thisrl._1().set(this,RandomGeneTree.randomAllele(childReq));
+  }
+
   ///////////// Step 6: Build a mutateTree() method that visits some fraction of the tree, mutating
   // it, using the method above.
+
+  public GeneTree mutateTree() {
+    return mutateTreeHelper((int) (percentMutation * this.numNodes()));
+  }
+
+  private GeneTree mutateTreeHelper(int timesLeft) {
+    if (timesLeft == 0)
+  }
+
 
   ///////////// Step 7: Build the control logic to drive your mutation engine from the web GUI! (Not
   // in this file...)
