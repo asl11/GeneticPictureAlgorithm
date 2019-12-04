@@ -24,6 +24,7 @@ import static edu.rice.prettypictures.RgbColor.color;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
+import edu.rice.io.Files;
 import edu.rice.util.Log;
 import io.vavr.Tuple;
 import io.vavr.collection.List;
@@ -171,7 +172,8 @@ class GeneTreeTest {
 //    System.out.println(rt.toJson().toIndentedString());
 //    System.out.println("================");
 //    System.out.println(x.map(tree -> tree.toJson().toIndentedString()));
-
+    Files.write("prettypictures-week3.json", rt.toString());
+    Files.write("prettypictures-week3.json", rt2.toString());
     for (int i = 0; i < 10; i++) {
       var bredtree = rt.crossBreed(rt2);
       var mutated = rt.mutateTree();

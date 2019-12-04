@@ -103,11 +103,11 @@ public class PrettyPicturesServerWeek3 {
                       () -> Log.e(TAG, () -> "failed to decode image height: " + request.url()))
                   .getOrElse(1);
           //TODO: - Bad Requests, check this again
-          if (genNum < 0 || genNum >= stateRecorder.length() || imageNum < 0 || imageNum >= stateRecorder.get(genNum).length()) {
-            Log.e(TAG, () -> "bogus generation/image (" + genNum + "/" + imageNum + ")");
-            response.status(300); // error!
-            return stringToUTF8("Bad arguments");
-          }
+//          if (genNum < 0 || genNum >= stateRecorder.length() || imageNum < 0 || imageNum >= stateRecorder.get(genNum).length()) {
+//            Log.e(TAG, () -> "bogus generation/image (" + genNum + "/" + imageNum + ")");
+//            response.status(300); // error!
+//            return stringToUTF8("Bad arguments");
+//          }
           var results =
               nanoBenchmarkVal(
                   () -> testGenes.get(imageNum).toImageFunction().toImage(width, height));
@@ -188,7 +188,7 @@ public class PrettyPicturesServerWeek3 {
             case 4:
 
             case 3:
-              testGenes = //states of test 3
+              testGenes = null;//states of test 3
             case 2:
               // regenerate every time, makes testing a little easier
               testGenes = TestGenesWeek2.randomTrees(50);
