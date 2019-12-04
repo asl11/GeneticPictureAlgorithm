@@ -188,7 +188,7 @@ public class PrettyPicturesServerWeek3 {
             case 4:
 
             case 3:
-
+              testGenes = //states of test 3
             case 2:
               // regenerate every time, makes testing a little easier
               testGenes = TestGenesWeek2.randomTrees(50);
