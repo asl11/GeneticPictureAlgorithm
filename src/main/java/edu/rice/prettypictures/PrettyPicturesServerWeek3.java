@@ -70,7 +70,8 @@ public class PrettyPicturesServerWeek3 {
     Log.i(TAG, () -> "Available processors: " + Runtime.getRuntime().availableProcessors());
 
     // Perform setup here
-
+    final var week2db = new TestGenesWeek2("prettypictures-week2.json");
+    // TODO: implement this handler
     /*
      * GET /image/gen/:gen/img/:img/height/:height/width/:width/
      * This handler is used to request a specific image from a specific generation.
@@ -79,8 +80,6 @@ public class PrettyPicturesServerWeek3 {
      *   need to get() the byte[] out of the Try<>. Remember also to set the response
      *   type to "image/png".
      */
-
-    // TODO: implement this handler
     get(
         "/image/gen/:gen/img/:img/height/:height/width/:width/",
         (request, response) -> {
@@ -109,17 +108,6 @@ public class PrettyPicturesServerWeek3 {
             response.status(300); // error!
             return stringToUTF8("Bad arguments");
           }
-
-          currentGenerationNumber = genNum;
-//          //Check if it is the first generation
-//          if (genNum.equals(0)) {
-//            //Construct a random tree up to a certain depth
-//
-//          } else if (genNum > 0) {
-//            //genNum is greater than 0
-//
-//          }
-
           var results =
               nanoBenchmarkVal(
                   () -> testGenes.get(imageNum).toImageFunction().toImage(width, height));
@@ -144,8 +132,42 @@ public class PrettyPicturesServerWeek3 {
                     response.status(300); // error!
                     return stringToUTF8("Internal failure");
                   });
+
+//          //Check if it is the first generation
+//          if (genNum.equals(0)) {
+//            //Construct a random tree up to a certain depth
+//            //update functionally?
+//            stateRecorder = stateRecorder.append(List.of(RandomGeneTree.randomTree(5)));
+//          }
+//            var results =
+//                nanoBenchmarkVal(
+//                    () -> stateRecorder.get(genNum).get(imageNum).toImageFunction().toImage(width, height));
+//            //() -> testGenes.get(imageNum).toImageFunction().toImage(width, height));
+//            Log.iformat(
+//                TAG,
+//                "rendered gen: %d, image: %02d (%dx%d), time: %.3f ms (%.3f μs/pixel)",
+//                genNum,
+//                imageNum,
+//                width,
+//                height,
+//                results._1 / 1_000_000.0,
+//                results._1 / (1_000.0 * width * height));
+//
+//            return imageToPng(results._2)
+//                .map(
+//                    imageBytes -> {
+//                      response.type("image/png");
+//                      return imageBytes;
+//                    })
+//                .getOrElse(
+//                    () -> {
+//                      response.status(300); // error!
+//                      return stringToUTF8("Internal failure");
+//                    });
+
         });
 
+    // TODO: implement this handler
     /*
      * POST /test/:number
      * This handler is used to load the standard test generation.
@@ -154,8 +176,6 @@ public class PrettyPicturesServerWeek3 {
      * - currentGeneration, the number of the generation to display
      * - numImages, the number of images per generation
      */
-
-    // TODO: implement this handler
     post(
         "/test/:number",
         (request, response) -> {
@@ -166,6 +186,7 @@ public class PrettyPicturesServerWeek3 {
 
           switch (testNumber) {
             case 4:
+
             case 3:
 
             case 2:
@@ -174,7 +195,7 @@ public class PrettyPicturesServerWeek3 {
               break;
             case 1:
             default:
-              //testGenes = week2db.getGenes();
+              testGenes = week2db.getGenes();
               break;
           }
           testGenesLength = testGenes.length();
@@ -182,11 +203,38 @@ public class PrettyPicturesServerWeek3 {
           return customJsonResponse(1, 0, testGenesLength);
         });
 
+    // TODO: implement this handler
+
     /*
      * GET /string/gen/:gen/img/:img/
      * This handler is used to print the internal structure of your image functions.
      * Return a string representation of image number :image from generation number :gen.
      */
+    get(
+        "/string/gen/:gen/img/:img/",
+        (request, response) -> {
+          final var params = request.params();
+          final var genNum =
+              stringToOptionInteger(params.get(":gen"))
+                  .onEmpty(
+                      () ->
+                          Log.e(TAG, () -> "failed to decode generation number: " + request.url()))
+                  .getOrElse(0);
+          final var imageNum =
+              stringToOptionInteger(params.get(":img"))
+                  .onEmpty(
+                      () -> Log.e(TAG, () -> "failed to decode image number: " + request.url()))
+                  .getOrElse(0);
+
+          if (genNum < 0 || genNum >= stateRecorder.length() || imageNum < 0 || imageNum >= stateRecorder.get(genNum).length()) {
+            Log.e(TAG, () -> "bogus generation/image (" + genNum + "/" + imageNum + ")");
+            response.status(300); // error!
+            return stringToUTF8("Bad arguments");
+          }
+
+          response.type("application/json");
+          return stateRecorder.get(genNum).get(imageNum).toJson().toIndentedString();
+        });
 
     // TODO: implement this handler
 
@@ -197,13 +245,11 @@ public class PrettyPicturesServerWeek3 {
      */
 
     //Good Case, but what about bad case where either no generation or no images to generation?
-
     get("/client-init/", (request, response) -> {
       //if (bad case) {call post reset} else {}
     return customJsonResponse( totalGenerationNumber, currentGenerationNumber,testGenesLength); });
 
     // TODO: implement this handler
-
     /*
      * POST /reset/:count/
      * This handler is used to reset the server to a random first generation.
@@ -224,6 +270,7 @@ public class PrettyPicturesServerWeek3 {
         }
         );
 
+
     // TODO: implement this handler
 
     /*
@@ -232,8 +279,6 @@ public class PrettyPicturesServerWeek3 {
      * Create a new generation bred from generation :olggen using the images in *.
      * Return a JSON response as in POST /test/.
      */
-
-    // TODO: implement this handler
 
     // You should not launch the client until all setup has been performed.
     launchBrowser("http://localhost:4567/prettyPicturesBreeder.html");
