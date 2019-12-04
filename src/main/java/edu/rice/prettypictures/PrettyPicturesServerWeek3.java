@@ -186,9 +186,11 @@ public class PrettyPicturesServerWeek3 {
 
           switch (testNumber) {
             case 4:
-
+              testGenes = new TestGenesWeek3(4).getGenes();
+              break;
             case 3:
-              testGenes = null;//states of test 3
+              testGenes = new TestGenesWeek3(3).getGenes();//states of test 3
+              break;
             case 2:
               // regenerate every time, makes testing a little easier
               testGenes = TestGenesWeek2.randomTrees(50);
@@ -225,6 +227,8 @@ public class PrettyPicturesServerWeek3 {
                   .onEmpty(
                       () -> Log.e(TAG, () -> "failed to decode image number: " + request.url()))
                   .getOrElse(0);
+
+
 
           if (genNum < 0 || genNum >= stateRecorder.length() || imageNum < 0 || imageNum >= stateRecorder.get(genNum).length()) {
             Log.e(TAG, () -> "bogus generation/image (" + genNum + "/" + imageNum + ")");

@@ -53,13 +53,31 @@ public class TestGenesWeek3 {
                         .onEmpty(() -> Log.e(TAG, "failure to parse gene: " + json.toString())))
             .flatMap(x -> x);
     if (inputnumber == 3) {
-      genes = List.<GeneTree>empty().append(temp.get(40));
+      var temp1 = mutatehelper(List.<GeneTree>empty().append(temp.get(40)),29);
+      var temp2 = mutatehelper(List.<GeneTree>empty().append(temp.get(41)), 29);
+      genes = temp1.appendAll(temp2);
+    } else {
+      var temp1 = breedhelper(List.<GeneTree>empty().append(temp.get(40)).append(temp.get(41)),  29);
+      var temp2 = breedhelper(List.<GeneTree>empty().append(temp.get(41)).append(temp.get(40)), 29);
+      genes = temp1.appendAll(temp2.removeAt(0).removeAt(0));
     }
-
-
   }
 
-  private
+  private Seq<GeneTree> mutatehelper(Seq<GeneTree> inputList, int timesLeft) {
+    if (timesLeft == 0) {
+      return inputList;
+    } else {
+      return mutatehelper(inputList.append(inputList.get(0).mutateTree()), timesLeft - 1);
+    }
+  }
+
+  private Seq<GeneTree> breedhelper(Seq<GeneTree> inputList, int timesLeft) {
+    if (timesLeft == 0) {
+      return inputList;
+    } else {
+      return breedhelper(inputList.append(inputList.get(0).crossBreed(inputList.get(1))), timesLeft - 1);
+    }
+  }
 
   /** Gets all of the test genes. */
   public Seq<GeneTree> getGenes() {
