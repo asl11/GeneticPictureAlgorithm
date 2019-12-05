@@ -28,9 +28,9 @@ please cut-and-paste the text from that email here._
 
 To make your graders lives easier, please answer these questions:
 
-1) Did you implement TEST 3 (mutants)? ( yes / no )
-2) Did you implement TEST 4 (crossbreeding)? ( yes / no )
-3) Where did you put your "ten favorite images" and their JSON genotypes? ( directory/name/here )
+1) Did you implement TEST 3 (mutants)? ( yes )
+2) Did you implement TEST 4 (crossbreeding)? ( yes )
+3) Where did you put your "ten favorite images" and their JSON genotypes? ( "favoritepictures.json" ) same directory as readme
 4) Where is the unit test that exercises your GeneTree lenses? ( directory/name/here )
 5) Where is the unit test that exercises your GeneTree mutation? ( directory/name/here )
 6) Where is the unit test that exercises your GeneTree crossbreeding? ( directory/name/here )
@@ -59,22 +59,24 @@ answer these separately.
 
   (Your answer.)
 
-### Student 2
+### Student 2 - Alex Li
 
 **GeneTree / RandomGeneTree**
 - What were some similarities in how you defined your GeneTree last week and how our reference implementation works?
 
-  (Your answer.)
+  We both have extensive error handling and store the children and gene seperately in fields in the class
   
 - What were some significant differences in how you defined your GeneTree last week?
 
-  (Your answer.)
+  My GeneTree class last week defined the children as an option of genetrees, instead of a sequence of genetrees.
+  Also, my genetree gene was just a string and was much messier than making it an allele
   
 **Crossbreeding**
 - Last week, we asked you to think about how you would *crossbreed* two parent gene-trees together, getting a
   new child gene-tree. How does your idea from last week compare to our lens-based approach this week?
 
-  (Your answer.)
+  It was similar in that I said that we would just take a random part of one tree and put it onto a random part of another.
+  The lenses make this process much simpler and easier to test. 
 
 ## Cool points
 
