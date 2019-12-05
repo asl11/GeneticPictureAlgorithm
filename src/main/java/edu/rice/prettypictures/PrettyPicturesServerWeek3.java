@@ -117,11 +117,13 @@ public class PrettyPicturesServerWeek3 {
               //INSERT conditions
               //INSERT lambda to get rid of get
               testGenes = breedingStateRecorder.get(genNum).get();
+              testGenesLength = testGenes.length();
               break;
             case 3:
               //INSERT conditions
               //Insert lambda to get rid of get
               testGenes = mutationStateRecorder.get(genNum).get();
+              testGenesLength = testGenes.length();
           }
           var results =
               nanoBenchmarkVal(
@@ -245,14 +247,14 @@ public class PrettyPicturesServerWeek3 {
 
 
 
-          if (genNum < 0 || genNum >= stateRecorder.length() || imageNum < 0 || imageNum >= stateRecorder.get(genNum).length()) {
+          if (genNum != 0 || imageNum < 0 || imageNum >= testGenesLength) {
             Log.e(TAG, () -> "bogus generation/image (" + genNum + "/" + imageNum + ")");
             response.status(300); // error!
             return stringToUTF8("Bad arguments");
           }
 
           response.type("application/json");
-          return stateRecorder.get(genNum).get(imageNum).toJson().toIndentedString();
+          return testGenes.get(imageNum).toJson().toIndentedString();
         });
 
     // TODO: implement this handler
