@@ -31,10 +31,21 @@ public class TestGenesWeek3 {
   private final Seq<GeneTree> genes; // initialized in constructor
 
   /** Given the name of the resource file, loads the requested genes. */
+  public TestGenesWeek3(GeneTree image1, GeneTree image2, int inputnumber) {
+    //Called from breed function
+
+    if (inputnumber == 3) {
+      var temp1 = mutatehelper(List.<GeneTree>empty().append(image1),29);
+      var temp2 = mutatehelper(List.<GeneTree>empty().append(image2), 29);
+      genes = temp1.appendAll(temp2);
+    } else {
+      var temp1 = breedhelper(List.<GeneTree>empty().append(image1).append(image2),  29);
+      var temp2 = breedhelper(List.<GeneTree>empty().append(image2).append(image1), 29);
+      genes = temp1.appendAll(temp2.removeAt(0).removeAt(0));
+    }
+  }
   public TestGenesWeek3(int inputnumber) {
-    // Week2 setup of test genes: note monadic error handling is used
-    // here, so this is a big harder to read, but super awesome to
-    // run.
+    //Generates 0th generation
 
     var temp =
         Files.readResource("prettypictures-week2.json")

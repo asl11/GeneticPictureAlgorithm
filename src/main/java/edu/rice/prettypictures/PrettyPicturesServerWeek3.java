@@ -32,6 +32,7 @@ import io.vavr.collection.HashMap;
 import io.vavr.collection.List;
 import io.vavr.collection.Map;
 import io.vavr.collection.Seq;
+import java.util.Random;
 import javax.sound.midi.Sequence;
 
 /**
@@ -55,10 +56,10 @@ public class PrettyPicturesServerWeek3 {
   private static int testNumber = 1; // mutated by the /test route
   private static Seq<GeneTree> testGenes = List.empty(); // mutated by the /test route
   private static int testGenesLength = 1; // mutated by the /test route
-
-  private static int totalGenerationNumber_3 = 0; //mutated by the /test route
+  private static Random random = new Random();
+  private static int totalGenerationNumber_3 = 1; //mutated by the /test route
   private static int currentGenerationNumber_3 = 0; //mutated by the /test route
-  private static int totalGenerationNumber_4 = 0; //mutated by the /test route
+  private static int totalGenerationNumber_4 = 1; //mutated by the /test route
   private static int currentGenerationNumber_4 = 0; //mutated by the /test route
   private static Map<Integer, Seq<GeneTree>> mutationStateRecorder = HashMap.empty();
   private static Map<Integer, Seq<GeneTree>> breedingStateRecorder = HashMap.empty();
@@ -205,18 +206,19 @@ public class PrettyPicturesServerWeek3 {
 
           switch (testNumber) {
             case 4:
-              testGenes = new TestGenesWeek3(4).getGenes();
               if (breedingStateRecorder.isEmpty()) {
-                breedingStateRecorder.put(0,testGenes);
+                testGenes = new TestGenesWeek3(4).getGenes();
+                breedingStateRecorder.put(0, testGenes);
               }
-
-              break;
+                return customJsonResponse(totalGenerationNumber_4,currentGenerationNumber_4,
+                    breedingStateRecorder.get(currentGenerationNumber_4).get().length());
             case 3:
-              testGenes = new TestGenesWeek3(3).getGenes();//states of test 3
               if (mutationStateRecorder.isEmpty()) {
                 mutationStateRecorder.put(0,testGenes);
+                testGenes = new TestGenesWeek3(3).getGenes();//states of test 3
               }
-              break;
+                return customJsonResponse(totalGenerationNumber_3,currentGenerationNumber_3,
+                    mutationStateRecorder.get(currentGenerationNumber_3).get().length());
             case 2:
               // regenerate every time, makes testing a little easier
               testGenes = TestGenesWeek2.randomTrees(50);
@@ -311,6 +313,33 @@ public class PrettyPicturesServerWeek3 {
      */
     post("/breed/oldgen/:oldgen/img/*",(request,response) -> {
       Seq<String> imageList = List.of(request.splat()[0].split("/"));
+      final var genNum =
+          stringToOptionInteger(request.params().get(":oldgen"))
+              .onEmpty(
+                  () ->
+                      Log.e(TAG, () -> "failed to decode generation number: " + request.url()))
+              .getOrElse(0);
+      if (testNumber == 4) {
+        GeneTree image1 = breedingStateRecorder.get(genNum).get()
+            .get(Integer.parseInt(imageList.get(random.nextInt(imageList.length()))));
+        GeneTree image2 = breedingStateRecorder.get(genNum).get()
+            .get(Integer.parseInt(imageList.get(random.nextInt(imageList.length()))));
+        testGenes = new TestGenesWeek3(image1, image2, 4).getGenes();
+        totalGenerationNumber_4++;
+        currentGenerationNumber_4++;
+        breedingStateRecorder.put(currentGenerationNumber_4,testGenes);
+        return customJsonResponse(totalGenerationNumber_4,currentGenerationNumber_4,testGenes.length());
+      } else {
+        GeneTree image1 = mutationStateRecorder.get(genNum).get()
+            .get(Integer.parseInt(imageList.get(random.nextInt(imageList.length()))));
+        GeneTree image2 = mutationStateRecorder.get(genNum).get()
+            .get(Integer.parseInt(imageList.get(random.nextInt(imageList.length()))));
+        testGenes = new TestGenesWeek3(image1, image2, 3).getGenes();
+        totalGenerationNumber_3++;
+        currentGenerationNumber_3++;
+        mutationStateRecorder.put(currentGenerationNumber_3,testGenes);
+        return customJsonResponse(totalGenerationNumber_3,currentGenerationNumber_3,testGenes.length());
+      }
 
 
     });
