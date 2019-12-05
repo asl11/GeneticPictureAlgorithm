@@ -265,11 +265,14 @@ public class PrettyPicturesServerWeek3 {
     //Good Case, but what about bad case where either no generation or no images to generation?
     get("/client-init/", (request, response) -> {
       //if (bad case) {call post reset} else {}
+
+      if (totalGenerations > 0)  {
+        testNumber = 0;
+        testGenesLength = stateRecorder.get(0).get().length();
+        return customJsonResponse(totalGenerations, currentGeneration, testGenesLength);
+      }
       switch (testNumber) {
         case 4:
-//          if (totalGenerationNumber_4 == 0) {
-//
-//          }
           return customJsonResponse( totalGenerationNumber_4, currentGenerationNumber_4, testGenesLength);
         case 3:
           return customJsonResponse(totalGenerationNumber_3, currentGenerationNumber_3, testGenesLength);
