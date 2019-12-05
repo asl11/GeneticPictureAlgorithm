@@ -208,13 +208,13 @@ public class PrettyPicturesServerWeek3 {
             case 4:
               if (breedingStateRecorder.isEmpty()) {
                 testGenes = new TestGenesWeek3(4).getGenes();
-                breedingStateRecorder.put(0, testGenes);
+                breedingStateRecorder = breedingStateRecorder.put(0, testGenes);
               }
                 return customJsonResponse(totalGenerationNumber_4,currentGenerationNumber_4,
                     breedingStateRecorder.get(currentGenerationNumber_4).get().length());
             case 3:
               if (mutationStateRecorder.isEmpty()) {
-                mutationStateRecorder.put(0,testGenes);
+                mutationStateRecorder = mutationStateRecorder.put(0,testGenes);
                 testGenes = new TestGenesWeek3(3).getGenes();//states of test 3
               }
                 return customJsonResponse(totalGenerationNumber_3,currentGenerationNumber_3,
@@ -281,6 +281,9 @@ public class PrettyPicturesServerWeek3 {
       //if (bad case) {call post reset} else {}
       switch (testNumber) {
         case 4:
+//          if (totalGenerationNumber_4 == 0) {
+//
+//          }
           return customJsonResponse( totalGenerationNumber_4, currentGenerationNumber_4, testGenesLength);
         case 3:
           return customJsonResponse(totalGenerationNumber_3, currentGenerationNumber_3, testGenesLength);
@@ -344,7 +347,7 @@ public class PrettyPicturesServerWeek3 {
         testGenes = new TestGenesWeek3(image1, image2, 4).getGenes();
         totalGenerationNumber_4++;
         currentGenerationNumber_4++;
-        breedingStateRecorder.put(currentGenerationNumber_4,testGenes);
+        breedingStateRecorder = breedingStateRecorder.put(currentGenerationNumber_4,testGenes);
         return customJsonResponse(totalGenerationNumber_4,currentGenerationNumber_4,testGenes.length());
       } else {
         GeneTree image1 = mutationStateRecorder.get(genNum).get()
@@ -354,7 +357,7 @@ public class PrettyPicturesServerWeek3 {
         testGenes = new TestGenesWeek3(image1, image2, 3).getGenes();
         totalGenerationNumber_3++;
         currentGenerationNumber_3++;
-        mutationStateRecorder.put(currentGenerationNumber_3,testGenes);
+        mutationStateRecorder = mutationStateRecorder.put(currentGenerationNumber_3,testGenes);
         return customJsonResponse(totalGenerationNumber_3,currentGenerationNumber_3,testGenes.length());
       }
 
