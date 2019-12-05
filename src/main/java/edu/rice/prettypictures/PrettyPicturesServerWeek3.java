@@ -141,6 +141,10 @@ public class PrettyPicturesServerWeek3 {
               //Insert lambda to get rid of get
               testGenes = mutationStateRecorder.get(genNum).get();
               testGenesLength = testGenes.length();
+              break;
+            case 0:
+              testGenes = stateRecorder.get(genNum).get();
+              testGenesLength = testGenes.length();
           }
           var results =
               nanoBenchmarkVal(
@@ -166,38 +170,6 @@ public class PrettyPicturesServerWeek3 {
                     response.status(300); // error!
                     return stringToUTF8("Internal failure");
                   });
-
-//          //Check if it is the first generation
-//          if (genNum.equals(0)) {
-//            //Construct a random tree up to a certain depth
-//            //update functionally?
-//            stateRecorder = stateRecorder.append(List.of(RandomGeneTree.randomTree(5)));
-//          }
-//            var results =
-//                nanoBenchmarkVal(
-//                    () -> stateRecorder.get(genNum).get(imageNum).toImageFunction().toImage(width, height));
-//            //() -> testGenes.get(imageNum).toImageFunction().toImage(width, height));
-//            Log.iformat(
-//                TAG,
-//                "rendered gen: %d, image: %02d (%dx%d), time: %.3f ms (%.3f μs/pixel)",
-//                genNum,
-//                imageNum,
-//                width,
-//                height,
-//                results._1 / 1_000_000.0,
-//                results._1 / (1_000.0 * width * height));
-//
-//            return imageToPng(results._2)
-//                .map(
-//                    imageBytes -> {
-//                      response.type("image/png");
-//                      return imageBytes;
-//                    })
-//                .getOrElse(
-//                    () -> {
-//                      response.status(300); // error!
-//                      return stringToUTF8("Internal failure");
-//                    });
 
         });
 
@@ -326,17 +298,7 @@ public class PrettyPicturesServerWeek3 {
           testGenesLength = count;
           testNumber = 0;
 
-//          if (testNumber == 3) {
-//            mutationStateRecorder = HashMap.of(0, new TestGenesWeek3(3).getGenes());
-//            totalGenerationNumber_3 = 1;
-//            currentGenerationNumber_3 = 0;
-//            return customJsonResponse(totalGenerationNumber_3, currentGenerationNumber_3,testGenesLength);
-//          } else if (testNumber == 4) {
-//            breedingStateRecorder = HashMap.of(0, new TestGenesWeek3(4).getGenes());
-//            totalGenerationNumber_4 = 0;
-//            currentGenerationNumber_4 = 1;
-//            return customJsonResponse(totalGenerationNumber_4, currentGenerationNumber_4,testGenesLength);
-//          }
+
       return customJsonResponse(1, 0, testGenesLength);
     });
 
