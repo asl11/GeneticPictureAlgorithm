@@ -26,6 +26,9 @@ import static spark.Spark.redirect;
 import static spark.Spark.staticFileLocation;
 
 import edu.rice.autograder.annotations.GradeCoverage;
+import edu.rice.io.Files;
+import edu.rice.json.Parser;
+import edu.rice.json.Value;
 import edu.rice.util.Log;
 import edu.rice.vavr.Sequences;
 import io.vavr.collection.HashMap;
@@ -53,7 +56,7 @@ import javax.sound.midi.Sequence;
 @GradeCoverage(project = "PP3", exclude = true)
 public class PrettyPicturesServerWeek3 {
   private static final String TAG = "PrettyPicturesServerWeek3";
-  private static int testNumber = 1; // mutated by the /test route
+  private static int testNumber = 0; // mutated by the /test route
   private static Seq<GeneTree> testGenes = List.empty(); // mutated by the /test route
   private static int testGenesLength = 1; // mutated by the /test route
   private static Random random = new Random();
@@ -80,7 +83,14 @@ public class PrettyPicturesServerWeek3 {
 
     // Perform setup here
     final var week2db = new TestGenesWeek2("prettypictures-week2.json");
+    //file handling
+    if (Files.read("src/main/resources/prettypictures-week3.json").isSuccess()) {
+      String test1 = Files.read("src/main/resources/prettypictures-week3.json").get();
+      Map<String, Value> pictures = Parser.parseJsonObject(test1).get().getMap();
+      totalGenerations = pictures.keySet().length();
+      currentGeneration = totalGenerations - 1;
 
+    }
     // TODO: implement this handler
     /*
      * GET /image/gen/:gen/img/:img/height/:height/width/:width/
@@ -343,6 +353,17 @@ public class PrettyPicturesServerWeek3 {
                   () ->
                       Log.e(TAG, () -> "failed to decode generation number: " + request.url()))
               .getOrElse(0);
+      if (testNumber == 0) {
+        GeneTree image1 = stateRecorder.get(genNum).get()
+            .get(Integer.parseInt(imageList.get(random.nextInt(imageList.length()))));
+        GeneTree image2 = stateRecorder.get(genNum).get()
+            .get(Integer.parseInt(imageList.get(random.nextInt(imageList.length()))));
+        totalGenerations++;
+        currentGeneration++;
+        testGenes = new TestGenesWeek3(image1, image2, testGenesLength).getGenes();
+        stateRecorder = stateRecorder.put(currentGeneration,testGenes);
+        return customJsonResponse(totalGenerations,currentGeneration,testGenesLength);
+      }
       if (testNumber == 4) {
         GeneTree image1 = breedingStateRecorder.get(genNum).get()
             .get(Integer.parseInt(imageList.get(random.nextInt(imageList.length()))));

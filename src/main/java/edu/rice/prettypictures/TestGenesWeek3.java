@@ -31,10 +31,19 @@ public class TestGenesWeek3 {
   private final Seq<GeneTree> genes; // initialized in constructor
 
   /** Given the name of the resource file, loads the requested genes. */
-  public TestGenesWeek3(GeneTree image1, GeneTree image2, int inputnumber) {
+
+  public TestGenesWeek3(GeneTree image1, GeneTree image2, int count) {
+    int num1 = count / 2;
+    int num2 = count - num1;
+    var temp1 = breedhelper(List.<GeneTree>empty().append(image1).append(image2), num1 - 1);
+    var temp2 = breedhelper(List.<GeneTree>empty().append(image2).append(image1), num2 - 1);
+    genes = temp1.appendAll(temp2.removeAt(0).removeAt(0));
+
+  }
+  public TestGenesWeek3(GeneTree image1, GeneTree image2, boolean inputnumber) { //3 for true, 4 for false
     //Called from breed function
 
-    if (inputnumber == 3) {
+    if (inputnumber) {
       var temp1 = mutatehelper(List.<GeneTree>empty().append(image1),29);
       var temp2 = mutatehelper(List.<GeneTree>empty().append(image2), 29);
       genes = temp1.appendAll(temp2);
@@ -74,6 +83,8 @@ public class TestGenesWeek3 {
     }
   }
 
+
+
   private Seq<GeneTree> mutatehelper(Seq<GeneTree> inputList, int timesLeft) {
     if (timesLeft == 0) {
       return inputList;
@@ -87,6 +98,14 @@ public class TestGenesWeek3 {
       return inputList;
     } else {
       return breedhelper(inputList.append(inputList.get(0).crossBreed(inputList.get(1))), timesLeft - 1);
+    }
+  }
+
+  private Seq<GeneTree> breedandmutatehelper(Seq<GeneTree> inputList, int timesLeft) {
+    if (timesLeft == 0) {
+      return inputList;
+    } else {
+      return breedandmutatehelper(inputList.append(inputList.get(0).crossBreed(inputList.get(1)).mutateTree()), timesLeft - 1);
     }
   }
 
