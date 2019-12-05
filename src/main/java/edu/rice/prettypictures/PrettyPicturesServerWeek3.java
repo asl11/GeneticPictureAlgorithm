@@ -229,7 +229,7 @@ public class PrettyPicturesServerWeek3 {
               break;
           }
           testGenesLength = testGenes.length();
-
+          //EDGE case, testgeneslength
           return customJsonResponse(0, 1, testGenesLength);
         });
 
@@ -279,7 +279,15 @@ public class PrettyPicturesServerWeek3 {
     //Good Case, but what about bad case where either no generation or no images to generation?
     get("/client-init/", (request, response) -> {
       //if (bad case) {call post reset} else {}
-    return customJsonResponse( totalGenerationNumber, currentGenerationNumber,testGenesLength); });
+      switch (testNumber) {
+        case 4:
+          return customJsonResponse( totalGenerationNumber_4, currentGenerationNumber_4, testGenesLength);
+        case 3:
+          return customJsonResponse(totalGenerationNumber_3, currentGenerationNumber_3, testGenesLength);
+        default:
+          return customJsonResponse(1, 0, testGenesLength);
+      }
+    });
 
     // TODO: implement this handler
     /*
@@ -290,17 +298,26 @@ public class PrettyPicturesServerWeek3 {
      */
     post("/reset/:count/", (request, response) -> {
           var count =
-              stringToOptionInteger(request.params().get(":countr"))
+              stringToOptionInteger(request.params().get(":count"))
                   .onEmpty(() -> Log.e(TAG, () -> "failed to decode count: " + request.url()))
                   .getOrElse(1);
-          stateRecorder = List.of() ;//Construct random tree of count images
-          // reset totalGenerationNumber, currentGenerationNumber, testGenesLength
-          totalGenerationNumber = 1;
-          currentGenerationNumber = 0;
+
+
           testGenesLength = count;
-          return customJsonResponse( totalGenerationNumber, currentGenerationNumber,testGenesLength);
-        }
-        );
+
+          if (testNumber == 3) {
+            mutationStateRecorder = HashMap.of(0, new TestGenesWeek3(3).getGenes());
+            totalGenerationNumber_3 = 1;
+            currentGenerationNumber_3 = 0;
+            return customJsonResponse(totalGenerationNumber_3, currentGenerationNumber_3,testGenesLength);
+          } else if (testNumber == 4) {
+            breedingStateRecorder = HashMap.of(0, new TestGenesWeek3(4).getGenes());
+            totalGenerationNumber_4 = 0;
+            currentGenerationNumber_4 = 1;
+            return customJsonResponse(totalGenerationNumber_4, currentGenerationNumber_4,testGenesLength);
+          }
+      return customJsonResponse(1, 0, testGenesLength);
+    });
 
 
     // TODO: implement this handler
