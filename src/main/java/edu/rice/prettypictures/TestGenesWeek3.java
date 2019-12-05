@@ -35,8 +35,8 @@ public class TestGenesWeek3 {
   public TestGenesWeek3(GeneTree image1, GeneTree image2, int count) {
     int num1 = count / 2;
     int num2 = count - num1;
-    var temp1 = breedhelper(List.<GeneTree>empty().append(image1).append(image2), num1 - 1);
-    var temp2 = breedhelper(List.<GeneTree>empty().append(image2).append(image1), num2 - 1);
+    var temp1 = breedandmutatehelper(List.<GeneTree>empty().append(image1).append(image2), num1 - 1);
+    var temp2 = breedandmutatehelper(List.<GeneTree>empty().append(image2).append(image1), num2 - 1);
     genes = temp1.appendAll(temp2.removeAt(0).removeAt(0));
 
   }

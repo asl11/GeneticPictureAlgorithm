@@ -29,8 +29,10 @@ import edu.rice.autograder.annotations.GradeCoverage;
 import edu.rice.io.Files;
 import edu.rice.json.Parser;
 import edu.rice.json.Value;
+import edu.rice.json.Value.JObject;
 import edu.rice.util.Log;
 import edu.rice.vavr.Sequences;
+import io.vavr.Tuple2;
 import io.vavr.collection.HashMap;
 import io.vavr.collection.List;
 import io.vavr.collection.Map;
@@ -85,10 +87,18 @@ public class PrettyPicturesServerWeek3 {
     final var week2db = new TestGenesWeek2("prettypictures-week2.json");
     //file handling
     if (Files.read("src/main/resources/prettypictures-week3.json").isSuccess()) {
-      String test1 = Files.read("src/main/resources/prettypictures-week3.json").get();
-      Map<String, Value> pictures = Parser.parseJsonObject(test1).get().getMap();
+      String filedata = Files.read("src/main/resources/prettypictures-week3.json").get();
+      Map<String, Value> pictures = Parser.parseJsonObject(filedata).get().getMap();
+      Seq<Tuple2<String,Value>> keyvalues = Parser.parseJsonObject(filedata).get().getContents();
+      keyvalues.forEach(
+          (tuple) -> {
+            Seq<GeneTree> trees = tuple._2().asJArray().getSeq().map((json) -> GeneTree.of(json).get());
+            stateRecorder.put(Integer.parseInt(tuple._1()), trees);
+          }
+      );
       totalGenerations = pictures.keySet().length();
       currentGeneration = totalGenerations - 1;
+
 
     }
     // TODO: implement this handler
@@ -338,7 +348,7 @@ public class PrettyPicturesServerWeek3 {
             .get(Integer.parseInt(imageList.get(random.nextInt(imageList.length()))));
         GeneTree image2 = breedingStateRecorder.get(genNum).get()
             .get(Integer.parseInt(imageList.get(random.nextInt(imageList.length()))));
-        testGenes = new TestGenesWeek3(image1, image2, 4).getGenes();
+        testGenes = new TestGenesWeek3(image1, image2, true).getGenes();
         totalGenerationNumber_4++;
         currentGenerationNumber_4++;
         breedingStateRecorder = breedingStateRecorder.put(currentGenerationNumber_4,testGenes);
@@ -348,7 +358,7 @@ public class PrettyPicturesServerWeek3 {
             .get(Integer.parseInt(imageList.get(random.nextInt(imageList.length()))));
         GeneTree image2 = mutationStateRecorder.get(genNum).get()
             .get(Integer.parseInt(imageList.get(random.nextInt(imageList.length()))));
-        testGenes = new TestGenesWeek3(image1, image2, 3).getGenes();
+        testGenes = new TestGenesWeek3(image1, image2, false).getGenes();
         totalGenerationNumber_3++;
         currentGenerationNumber_3++;
         mutationStateRecorder = mutationStateRecorder.put(currentGenerationNumber_3,testGenes);
@@ -359,6 +369,12 @@ public class PrettyPicturesServerWeek3 {
     });
     // You should not launch the client until all setup has been performed.
     launchBrowser("http://localhost:4567/prettyPicturesBreeder.html");
+  }
+
+  private void writeToFile(Map<Integer, Seq<GeneTree>> input) {
+    Map<String,Value> newinput = input.mapValues(value -> (Value) Value.JArray.fromSeq(value.map(GeneTree::toJson)))
+        .mapKeys(Object::toString);
+    Files.write("prettypictures-week3.json",JObject.fromMap(newinput).toString());
   }
 
   private static String customJsonResponse(
