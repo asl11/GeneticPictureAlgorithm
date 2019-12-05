@@ -31,14 +31,11 @@ import edu.rice.json.Parser;
 import edu.rice.json.Value;
 import edu.rice.json.Value.JObject;
 import edu.rice.util.Log;
-import edu.rice.vavr.Sequences;
-import io.vavr.Tuple2;
 import io.vavr.collection.HashMap;
 import io.vavr.collection.List;
 import io.vavr.collection.Map;
 import io.vavr.collection.Seq;
 import java.util.Random;
-import javax.sound.midi.Sequence;
 
 /**
  * Web server for Pretty Pictures. "Run" this and it will launch your browser with our
@@ -62,17 +59,17 @@ public class PrettyPicturesServerWeek3 {
   private static Seq<GeneTree> testGenes = List.empty(); // mutated by the /test route
   private static int testGenesLength = 1; // mutated by the /test route
   private static Random random = new Random();
-  private static int totalGenerationNumber_3 = 1; //mutated by the /test route
-  private static int currentGenerationNumber_3 = 0; //mutated by the /test route
-  private static int totalGenerationNumber_4 = 1; //mutated by the /test route
-  private static int currentGenerationNumber_4 = 0; //mutated by the /test route
+  private static int totalGenerationNumber_3 = 1; // mutated by the /test route
+  private static int currentGenerationNumber_3 = 0; // mutated by the /test route
+  private static int totalGenerationNumber_4 = 1; // mutated by the /test route
+  private static int currentGenerationNumber_4 = 0; // mutated by the /test route
   private static Map<Integer, Seq<GeneTree>> mutationStateRecorder = HashMap.empty();
   private static Map<Integer, Seq<GeneTree>> breedingStateRecorder = HashMap.empty();
 
+  // These fields are for the breeding operations in the play button
   private static Map<Integer, Seq<GeneTree>> stateRecorder = HashMap.empty();
   private static int totalGenerations = 0;
   private static int currentGeneration = 0;
-
 
   /** Main entry point for the PrettyPictures web server. Args are ignored. */
   public static void main(String[] args) {
@@ -85,21 +82,19 @@ public class PrettyPicturesServerWeek3 {
 
     // Perform setup here
     final var week2db = new TestGenesWeek2("prettypictures-week2.json");
-    //file handling
-    if (Files.read("prettypictures-week3.json").isSuccess() && !Files.read("prettypictures-week3.json").isEmpty()) {
+    // file handling
+    if (Files.read("prettypictures-week3.json").isSuccess()
+        && !Files.read("prettypictures-week3.json").isEmpty()
+        && Parser.parseJsonObject(Files.read("prettypictures-week3.json").get()).isDefined()) {
       String filedata = Files.read("prettypictures-week3.json").get();
       Map<String, Value> pictures = Parser.parseJsonObject(filedata).get().getMap();
-      Seq<Tuple2<String,Value>> keyvalues = Parser.parseJsonObject(filedata).get().getContents();
-      keyvalues.forEach(
-          (tuple) -> {
-            Seq<GeneTree> trees = tuple._2().asJArray().getSeq().map((json) -> GeneTree.of(json).get());
-            stateRecorder = stateRecorder.put(Integer.parseInt(tuple._1()), trees);
-          }
-      );
+      stateRecorder =
+          pictures
+              .mapValues(
+                  json -> json.asJArray().getSeq().map(jsonTree -> GeneTree.of(jsonTree).get()))
+              .mapKeys(Integer::parseInt);
       totalGenerations = pictures.keySet().length();
       currentGeneration = totalGenerations - 1;
-
-
     }
     // TODO: implement this handler
     /*
@@ -132,29 +127,38 @@ public class PrettyPicturesServerWeek3 {
                   .onEmpty(
                       () -> Log.e(TAG, () -> "failed to decode image height: " + request.url()))
                   .getOrElse(1);
-          //TODO: - Bad Requests, check this again
-//          if (genNum < 0 || genNum >= stateRecorder.length() || imageNum < 0 || imageNum >= stateRecorder.get(genNum).length()) {
-//            Log.e(TAG, () -> "bogus generation/image (" + genNum + "/" + imageNum + ")");
-//            response.status(300); // error!
-//            return stringToUTF8("Bad arguments");
-//          }
+          // TODO: - Bad Requests, check this again - Bad requests check only if we're not in a
+          // test, since tests should be the same every time
+          // -----Don't spam the breed button or this might mess up -----
+          if (testNumber == 0
+              && (genNum < 0
+                  || genNum >= stateRecorder.length()
+                  || imageNum < 0
+                  || imageNum >= stateRecorder.get(genNum).get().length())) {
+            Log.e(TAG, () -> "bogus generation/image (" + genNum + "/" + imageNum + ")");
+            response.status(300); // error!
+            return stringToUTF8("Bad arguments");
+          }
 
           switch (testNumber) {
             case 4:
-              //INSERT conditions
-              //INSERT lambda to get rid of get
+              // INSERT conditions
+              // INSERT lambda to get rid of get
               testGenes = breedingStateRecorder.get(genNum).get();
               testGenesLength = testGenes.length();
               break;
             case 3:
-              //INSERT conditions
-              //Insert lambda to get rid of get
+              // INSERT conditions
+              // Insert lambda to get rid of get
               testGenes = mutationStateRecorder.get(genNum).get();
               testGenesLength = testGenes.length();
               break;
             case 0:
               testGenes = stateRecorder.get(genNum).get();
               testGenesLength = testGenes.length();
+              break;
+            default:
+              // should never get here testgenes needs no update
           }
           var results =
               nanoBenchmarkVal(
@@ -180,7 +184,6 @@ public class PrettyPicturesServerWeek3 {
                     response.status(300); // error!
                     return stringToUTF8("Internal failure");
                   });
-
         });
 
     // TODO: implement this handler
@@ -206,15 +209,19 @@ public class PrettyPicturesServerWeek3 {
                 testGenes = new TestGenesWeek3(4).getGenes();
                 breedingStateRecorder = breedingStateRecorder.put(0, testGenes);
               }
-                return customJsonResponse(totalGenerationNumber_4,currentGenerationNumber_4,
-                    breedingStateRecorder.get(currentGenerationNumber_4).get().length());
+              return customJsonResponse(
+                  totalGenerationNumber_4,
+                  currentGenerationNumber_4,
+                  breedingStateRecorder.get(currentGenerationNumber_4).get().length());
             case 3:
               if (mutationStateRecorder.isEmpty()) {
-                testGenes = new TestGenesWeek3(3).getGenes();//states of test 3
-                mutationStateRecorder = mutationStateRecorder.put(0,testGenes);
+                testGenes = new TestGenesWeek3(3).getGenes(); // states of test 3
+                mutationStateRecorder = mutationStateRecorder.put(0, testGenes);
               }
-                return customJsonResponse(totalGenerationNumber_3,currentGenerationNumber_3,
-                    mutationStateRecorder.get(currentGenerationNumber_3).get().length());
+              return customJsonResponse(
+                  totalGenerationNumber_3,
+                  currentGenerationNumber_3,
+                  mutationStateRecorder.get(currentGenerationNumber_3).get().length());
             case 2:
               // regenerate every time, makes testing a little easier
               testGenes = TestGenesWeek2.randomTrees(50);
@@ -225,8 +232,7 @@ public class PrettyPicturesServerWeek3 {
               break;
           }
           testGenesLength = testGenes.length();
-          //EDGE case, testgeneslength
-          return customJsonResponse(1, 0, testGenesLength);
+          return customJsonResponse(1, 0, testGenesLength); // This one for tests 1 and 2
         });
 
     // TODO: implement this handler
@@ -252,9 +258,10 @@ public class PrettyPicturesServerWeek3 {
                       () -> Log.e(TAG, () -> "failed to decode image number: " + request.url()))
                   .getOrElse(0);
 
-
-
-          if (genNum < 0 || genNum > totalGenerations || imageNum < 0 || imageNum >= testGenesLength) {
+          if (genNum < 0
+              || genNum > totalGenerations
+              || imageNum < 0
+              || imageNum >= testGenesLength) {
             Log.e(TAG, () -> "bogus generation/image (" + genNum + "/" + imageNum + ")");
             response.status(300); // error!
             return stringToUTF8("Bad arguments");
@@ -272,24 +279,28 @@ public class PrettyPicturesServerWeek3 {
      * Return a JSON response as in POST /test/.
      */
 
-    //Good Case, but what about bad case where either no generation or no images to generation?
-    get("/client-init/", (request, response) -> {
-      //Need to check client init
-      if ((totalGenerations > 0 ) && (stateRecorder.get(0).get().length() > 0) )  {
-        testNumber = 0;
-        testGenesLength = stateRecorder.get(0).get().length();
-        return customJsonResponse(totalGenerations, currentGeneration, testGenesLength);
-      }
-      return customJsonResponse(0, 0, 0 );
-//      switch (testNumber) {
-//        case 4:
-//          return customJsonResponse( totalGenerationNumber_4, currentGenerationNumber_4, testGenesLength);
-//        case 3:
-//          return customJsonResponse(totalGenerationNumber_3, currentGenerationNumber_3, testGenesLength);
-//        default:
-//          return customJsonResponse(1, 0, testGenesLength);
-//      }
-    });
+    // Good Case, but what about bad case where either no generation or no images to generation?
+    get(
+        "/client-init/",
+        (request, response) -> {
+          // Need to check client init
+          if ((totalGenerations > 0) && (stateRecorder.get(0).get().length() > 0)) {
+            testNumber = 0;
+            testGenesLength = stateRecorder.get(0).get().length();
+            return customJsonResponse(totalGenerations, currentGeneration, testGenesLength);
+          }
+          return customJsonResponse(0, 0, 0);
+          //      switch (testNumber) {
+          //        case 4:
+          //          return customJsonResponse( totalGenerationNumber_4, currentGenerationNumber_4,
+          // testGenesLength);
+          //        case 3:
+          //          return customJsonResponse(totalGenerationNumber_3, currentGenerationNumber_3,
+          // testGenesLength);
+          //        default:
+          //          return customJsonResponse(1, 0, testGenesLength);
+          //      }
+        });
 
     // TODO: implement this handler
     /*
@@ -298,7 +309,9 @@ public class PrettyPicturesServerWeek3 {
      * Reset the stored generations to a new, randomly generated first generation with :count images.
      * Return a JSON response as in POST /test/.
      */
-    post("/reset/:count/", (request, response) -> {
+    post(
+        "/reset/:count/",
+        (request, response) -> {
           var count =
               stringToOptionInteger(request.params().get(":count"))
                   .onEmpty(() -> Log.e(TAG, () -> "failed to decode count: " + request.url()))
@@ -312,10 +325,8 @@ public class PrettyPicturesServerWeek3 {
           testGenesLength = count;
           testNumber = 0;
 
-
-      return customJsonResponse(1, 0, testGenesLength);
-    });
-
+          return customJsonResponse(1, 0, testGenesLength);
+        });
 
     // TODO: implement this handler
 
@@ -325,58 +336,87 @@ public class PrettyPicturesServerWeek3 {
      * Create a new generation bred from generation :olggen using the images in *.
      * Return a JSON response as in POST /test/.
      */
-    post("/breed/oldgen/:oldgen/img/*",(request,response) -> {
-      Seq<String> imageList = List.of(request.splat()[0].split("/"));
-      final var genNum =
-          stringToOptionInteger(request.params().get(":oldgen"))
-              .onEmpty(
-                  () ->
-                      Log.e(TAG, () -> "failed to decode generation number: " + request.url()))
-              .getOrElse(0);
-      if (testNumber == 0) {
-        GeneTree image1 = stateRecorder.get(genNum).get()
-            .get(Integer.parseInt(imageList.get(random.nextInt(imageList.length()))));
-        GeneTree image2 = stateRecorder.get(genNum).get()
-            .get(Integer.parseInt(imageList.get(random.nextInt(imageList.length()))));
-        totalGenerations++;
-        currentGeneration++;
-        testGenes = new TestGenesWeek3(image1, image2, testGenesLength).getGenes();
-        stateRecorder = stateRecorder.put(currentGeneration,testGenes);
-        writeToFile(stateRecorder);
-        return customJsonResponse(totalGenerations,currentGeneration,testGenesLength);
-      }
-      if (testNumber == 4) {
-        GeneTree image1 = breedingStateRecorder.get(genNum).get()
-            .get(Integer.parseInt(imageList.get(random.nextInt(imageList.length()))));
-        GeneTree image2 = breedingStateRecorder.get(genNum).get()
-            .get(Integer.parseInt(imageList.get(random.nextInt(imageList.length()))));
-        testGenes = new TestGenesWeek3(image1, image2, true).getGenes();
-        totalGenerationNumber_4++;
-        currentGenerationNumber_4++;
-        breedingStateRecorder = breedingStateRecorder.put(currentGenerationNumber_4,testGenes);
-        return customJsonResponse(totalGenerationNumber_4,currentGenerationNumber_4,testGenes.length());
-      } else {
-        GeneTree image1 = mutationStateRecorder.get(genNum).get()
-            .get(Integer.parseInt(imageList.get(random.nextInt(imageList.length()))));
-        GeneTree image2 = mutationStateRecorder.get(genNum).get()
-            .get(Integer.parseInt(imageList.get(random.nextInt(imageList.length()))));
-        testGenes = new TestGenesWeek3(image1, image2, false).getGenes();
-        totalGenerationNumber_3++;
-        currentGenerationNumber_3++;
-        mutationStateRecorder = mutationStateRecorder.put(currentGenerationNumber_3,testGenes);
-        return customJsonResponse(totalGenerationNumber_3,currentGenerationNumber_3,testGenes.length());
-      }
+    post(
+        "/breed/oldgen/:oldgen/img/*",
+        (request, response) -> {
+          Seq<String> imageList = List.of(request.splat()[0].split("/"));
+          final var genNum =
+              stringToOptionInteger(request.params().get(":oldgen"))
+                  .onEmpty(
+                      () ->
+                          Log.e(TAG, () -> "failed to decode generation number: " + request.url()))
+                  .getOrElse(0);
+          if (testNumber == 0) {
+            GeneTree image1 =
+                stateRecorder
+                    .get(genNum)
+                    .get()
+                    .get(Integer.parseInt(imageList.get(random.nextInt(imageList.length()))));
+            GeneTree image2 =
+                stateRecorder
+                    .get(genNum)
+                    .get()
+                    .get(Integer.parseInt(imageList.get(random.nextInt(imageList.length()))));
+            totalGenerations++;
+            currentGeneration++;
+            testGenes = new TestGenesWeek3(image1, image2, testGenesLength).getGenes();
+            stateRecorder = stateRecorder.put(currentGeneration, testGenes);
+            writeToFile(stateRecorder);
+            return customJsonResponse(totalGenerations, currentGeneration, testGenesLength);
+          }
 
+          // -----------The Following is because we mistakenly also implemented breeding for tests 3
+          // and 4--------
+          if (testNumber == 4) {
+            GeneTree image1 =
+                breedingStateRecorder
+                    .get(genNum)
+                    .get()
+                    .get(Integer.parseInt(imageList.get(random.nextInt(imageList.length()))));
+            GeneTree image2 =
+                breedingStateRecorder
+                    .get(genNum)
+                    .get()
+                    .get(Integer.parseInt(imageList.get(random.nextInt(imageList.length()))));
+            testGenes = new TestGenesWeek3(image1, image2, true).getGenes();
+            totalGenerationNumber_4++;
+            currentGenerationNumber_4++;
+            breedingStateRecorder = breedingStateRecorder.put(currentGenerationNumber_4, testGenes);
+            return customJsonResponse(
+                totalGenerationNumber_4, currentGenerationNumber_4, testGenes.length());
+          } else {
+            GeneTree image1 =
+                mutationStateRecorder
+                    .get(genNum)
+                    .get()
+                    .get(Integer.parseInt(imageList.get(random.nextInt(imageList.length()))));
+            GeneTree image2 =
+                mutationStateRecorder
+                    .get(genNum)
+                    .get()
+                    .get(Integer.parseInt(imageList.get(random.nextInt(imageList.length()))));
+            testGenes = new TestGenesWeek3(image1, image2, false).getGenes();
+            totalGenerationNumber_3++;
+            currentGenerationNumber_3++;
+            mutationStateRecorder = mutationStateRecorder.put(currentGenerationNumber_3, testGenes);
+            return customJsonResponse(
+                totalGenerationNumber_3, currentGenerationNumber_3, testGenes.length());
+          }
+        });
 
-    });
-    // You should not launch the client until all setup has been performed.
+    // All setup finished, launch
     launchBrowser("http://localhost:4567/prettyPicturesBreeder.html");
   }
 
+  /*
+  This is a helper function to write the state recorder to file
+   */
   private static void writeToFile(Map<Integer, Seq<GeneTree>> input) {
-    Map<String,Value> newinput = input.mapValues(value -> (Value) Value.JArray.fromSeq(value.map(GeneTree::toJson)))
-        .mapKeys(Object::toString);
-    Files.write("prettypictures-week3.json",JObject.fromMap(newinput).toString());
+    Map<String, Value> newinput =
+        input
+            .mapValues(value -> (Value) Value.JArray.fromSeq(value.map(GeneTree::toJson)))
+            .mapKeys(Object::toString);
+    Files.write("prettypictures-week3.json", JObject.fromMap(newinput).toString());
   }
 
   private static String customJsonResponse(

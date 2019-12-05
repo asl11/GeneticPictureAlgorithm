@@ -31,30 +31,33 @@ public class TestGenesWeek3 {
   private final Seq<GeneTree> genes; // initialized in constructor
 
   /** Given the name of the resource file, loads the requested genes. */
-
   public TestGenesWeek3(GeneTree image1, GeneTree image2, int count) {
     int num1 = count / 2;
     int num2 = count - num1;
-    var temp1 = breedandmutatehelper(List.<GeneTree>empty().append(image1).append(image2), num1 - 1);
-    var temp2 = breedandmutatehelper(List.<GeneTree>empty().append(image2).append(image1), num2 - 1);
+    var temp1 =
+        breedandmutatehelper(List.<GeneTree>empty().append(image1).append(image2), num1 - 1);
+    var temp2 =
+        breedandmutatehelper(List.<GeneTree>empty().append(image2).append(image1), num2 - 1);
     genes = temp1.appendAll(temp2.removeAt(0).removeAt(0));
-
   }
-  public TestGenesWeek3(GeneTree image1, GeneTree image2, boolean inputnumber) { //3 for true, 4 for false
-    //Called from breed function
+
+  public TestGenesWeek3(
+      GeneTree image1, GeneTree image2, boolean inputnumber) { // 3 for true, 4 for false
+    // Called from breed function
 
     if (inputnumber) {
-      var temp1 = mutatehelper(List.<GeneTree>empty().append(image1),29);
+      var temp1 = mutatehelper(List.<GeneTree>empty().append(image1), 29);
       var temp2 = mutatehelper(List.<GeneTree>empty().append(image2), 29);
       genes = temp1.appendAll(temp2);
     } else {
-      var temp1 = breedhelper(List.<GeneTree>empty().append(image1).append(image2),  29);
+      var temp1 = breedhelper(List.<GeneTree>empty().append(image1).append(image2), 29);
       var temp2 = breedhelper(List.<GeneTree>empty().append(image2).append(image1), 29);
       genes = temp1.appendAll(temp2.removeAt(0).removeAt(0));
     }
   }
+
   public TestGenesWeek3(int inputNumber) {
-    //Generates 0th generation
+    // Generates 0th generation
 
     var temp =
         Files.readResource("prettypictures-week2.json")
@@ -73,17 +76,15 @@ public class TestGenesWeek3 {
                         .onEmpty(() -> Log.e(TAG, "failure to parse gene: " + json.toString())))
             .flatMap(x -> x);
     if (inputNumber == 3) {
-      var temp1 = mutatehelper(List.<GeneTree>empty().append(temp.get(40)),29);
+      var temp1 = mutatehelper(List.<GeneTree>empty().append(temp.get(40)), 29);
       var temp2 = mutatehelper(List.<GeneTree>empty().append(temp.get(41)), 29);
       genes = temp1.appendAll(temp2);
     } else {
-      var temp1 = breedhelper(List.<GeneTree>empty().append(temp.get(40)).append(temp.get(41)),  29);
+      var temp1 = breedhelper(List.<GeneTree>empty().append(temp.get(40)).append(temp.get(41)), 29);
       var temp2 = breedhelper(List.<GeneTree>empty().append(temp.get(41)).append(temp.get(40)), 29);
       genes = temp1.appendAll(temp2.removeAt(0).removeAt(0));
     }
   }
-
-
 
   private Seq<GeneTree> mutatehelper(Seq<GeneTree> inputList, int timesLeft) {
     if (timesLeft == 0) {
@@ -97,7 +98,8 @@ public class TestGenesWeek3 {
     if (timesLeft == 0) {
       return inputList;
     } else {
-      return breedhelper(inputList.append(inputList.get(0).crossBreed(inputList.get(1))), timesLeft - 1);
+      return breedhelper(
+          inputList.append(inputList.get(0).crossBreed(inputList.get(1))), timesLeft - 1);
     }
   }
 
@@ -105,7 +107,9 @@ public class TestGenesWeek3 {
     if (timesLeft == 0) {
       return inputList;
     } else {
-      return breedandmutatehelper(inputList.append(inputList.get(0).crossBreed(inputList.get(1)).mutateTree()), timesLeft - 1);
+      return breedandmutatehelper(
+          inputList.append(inputList.get(0).crossBreed(inputList.get(1)).mutateTree()),
+          timesLeft - 1);
     }
   }
 

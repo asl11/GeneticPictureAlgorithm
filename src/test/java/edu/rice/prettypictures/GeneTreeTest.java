@@ -25,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 import edu.rice.io.Files;
-import edu.rice.util.Log;
 import io.vavr.Tuple;
 import io.vavr.collection.List;
 import io.vavr.collection.Seq;
@@ -91,7 +90,6 @@ class GeneTreeTest {
         .map(ot -> dynamicTest(ot._1, ot._2::isDefined));
   }
 
-
   @TestFactory
   Seq<DynamicTest> testJson() {
     var testTrees =
@@ -108,7 +106,6 @@ class GeneTreeTest {
                         constantColorTree(color("000000").get()),
                         constantNumberTree(1.0))))
             .map(Option::get);
-
 
     return testTrees.map(
         tree ->
@@ -169,9 +166,9 @@ class GeneTreeTest {
     var rtL = rt.getRandomLens();
     var x = rtL._2().get(rt);
 
-//    System.out.println(rt.toJson().toIndentedString());
-//    System.out.println("================");
-//    System.out.println(x.map(tree -> tree.toJson().toIndentedString()));
+    //    System.out.println(rt.toJson().toIndentedString());
+    //    System.out.println("================");
+    //    System.out.println(x.map(tree -> tree.toJson().toIndentedString()));
     Files.write("prettypictures-week3.json", rt.toString());
     Files.write("prettypictures-week3.json", rt2.toString());
     for (int i = 0; i < 10; i++) {
@@ -185,10 +182,10 @@ class GeneTreeTest {
       System.out.println("================");
       System.out.println(mutated);
       System.out.println("================");
-//      System.out.println(mutated.equals(rt));
-//      System.out.println(GeneTree.of(bredtree.toJson()).isDefined());
-//      System.out.println(GeneTree.of(mutated.toJson()).isDefined());
-//      System.out.println();
+      //      System.out.println(mutated.equals(rt));
+      //      System.out.println(GeneTree.of(bredtree.toJson()).isDefined());
+      //      System.out.println(GeneTree.of(mutated.toJson()).isDefined());
+      //      System.out.println();
     }
   }
 }

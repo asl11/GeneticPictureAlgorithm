@@ -34,7 +34,6 @@ import io.vavr.Tuple2;
 import io.vavr.collection.List;
 import io.vavr.collection.Seq;
 import io.vavr.control.Option;
-import java.awt.Color;
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -391,18 +390,17 @@ public class GeneTree {
   public GeneTree setChildren(Seq<GeneTree> children) {
     GeneTree randchild = children.get(random.nextInt(children.length()));
     int index = random.nextInt(this.children.length());
-    Seq<GeneTree> newchildren = this.children.replace(this.children.get(index),randchild);
+    Seq<GeneTree> newchildren = this.children.replace(this.children.get(index), randchild);
     return new GeneTree(this.gene, newchildren);
   }
 
   ///////////// Step 2: Build lenses that can compose to allow getting/setting/updating deep into a
   // GeneTree.
 
-  public final Lens<GeneTree, Allele> geneLens = Lens.lens(GeneTree::getGene,
-      GeneTree::setGene);
+  public final Lens<GeneTree, Allele> geneLens = Lens.lens(GeneTree::getGene, GeneTree::setGene);
 
-  public final Lens<GeneTree, Seq<GeneTree>> childrenLens = Lens.lens(GeneTree::getChildren,
-      GeneTree::setChildren);
+  public final Lens<GeneTree, Seq<GeneTree>> childrenLens =
+      Lens.lens(GeneTree::getChildren, GeneTree::setChildren);
 
   ///////////// Step 3: Build a getRandomLens() function that will point to a valid GeneTree within
   // "this" current GeneTree.
@@ -415,16 +413,17 @@ public class GeneTree {
     var json = this.toJson();
     return this.children.length() != 0
         ? getRandomLensHelper(json)
-        : Tuple.of(geneLens,childrenLens);
+        : Tuple.of(geneLens, childrenLens);
   }
 
-  private Tuple2<Lens<GeneTree, Allele>, Lens<GeneTree, Seq<GeneTree>>> getRandomLensHelper(Value input) {
-    //System.out.println(input);
+  private Tuple2<Lens<GeneTree, Allele>, Lens<GeneTree, Seq<GeneTree>>> getRandomLensHelper(
+      Value input) {
+    // System.out.println(input);
     Seq<Value> inputList = input.asJArray().getSeq();
     int index = random.nextInt(inputList.length());
     if (!inputList.get(index).asJArrayOption().isDefined()) {
       GeneTree temp = GeneTree.of(input).get();
-      //System.out.println(temp);
+      // System.out.println(temp);
       return Tuple.of(temp.geneLens, temp.childrenLens);
     } else {
       return getRandomLensHelper(inputList.get(index));
@@ -437,9 +436,8 @@ public class GeneTree {
   public GeneTree crossBreed(GeneTree other) {
     var thisrl = this.getRandomLens();
     var otherrl = other.getRandomLens();
-    return thisrl._2().set(this,otherrl._2().get(other));
+    return thisrl._2().set(this, otherrl._2().get(other));
   }
-
 
   ///////////// Step 5: Build a mutateNode() method that replaces the current gene with another,
   // keeping the original children. Again, use your random lens.
@@ -447,7 +445,7 @@ public class GeneTree {
   public GeneTree mutateNode() {
     var thisrl = this.getRandomLens();
     int childReq = thisrl._1().get(this).numChildren();
-    return thisrl._1().set(this,RandomGeneTree.randomAllele(childReq));
+    return thisrl._1().set(this, RandomGeneTree.randomAllele(childReq));
   }
 
   ///////////// Step 6: Build a mutateTree() method that visits some fraction of the tree, mutating
@@ -465,7 +463,6 @@ public class GeneTree {
       return this.mutateNode().mutateTreeHelper(timesLeft - 1);
     }
   }
-
 
   ///////////// Step 7: Build the control logic to drive your mutation engine from the web GUI! (Not
   // in this file...)
