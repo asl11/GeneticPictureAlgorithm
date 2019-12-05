@@ -305,6 +305,7 @@ public class PrettyPicturesServerWeek3 {
                   .getOrElse(1);
 
           stateRecorder = HashMap.of(0, TestGenesWeek2.randomTrees(count));
+          writeToFile(stateRecorder);
           totalGenerations = 1;
           currentGeneration = 0;
           testGenes = stateRecorder.get(0).get();
