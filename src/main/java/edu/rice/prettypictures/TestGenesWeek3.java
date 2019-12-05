@@ -53,7 +53,7 @@ public class TestGenesWeek3 {
       genes = temp1.appendAll(temp2.removeAt(0).removeAt(0));
     }
   }
-  public TestGenesWeek3(int inputnumber) {
+  public TestGenesWeek3(int inputNumber) {
     //Generates 0th generation
 
     var temp =
@@ -72,7 +72,7 @@ public class TestGenesWeek3 {
                     GeneTree.of(json)
                         .onEmpty(() -> Log.e(TAG, "failure to parse gene: " + json.toString())))
             .flatMap(x -> x);
-    if (inputnumber == 3) {
+    if (inputNumber == 3) {
       var temp1 = mutatehelper(List.<GeneTree>empty().append(temp.get(40)),29);
       var temp2 = mutatehelper(List.<GeneTree>empty().append(temp.get(41)), 29);
       genes = temp1.appendAll(temp2);
