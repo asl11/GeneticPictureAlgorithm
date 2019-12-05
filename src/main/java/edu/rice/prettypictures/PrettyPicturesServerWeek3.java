@@ -28,6 +28,7 @@ import static spark.Spark.staticFileLocation;
 import edu.rice.autograder.annotations.GradeCoverage;
 import edu.rice.util.Log;
 import edu.rice.vavr.Sequences;
+import io.vavr.collection.HashMap;
 import io.vavr.collection.List;
 import io.vavr.collection.Map;
 import io.vavr.collection.Seq;
@@ -57,7 +58,9 @@ public class PrettyPicturesServerWeek3 {
 
   private static int totalGenerationNumber = 0; //mutated by the /test route
   private static int currentGenerationNumber = 0; //mutated by the /test route
-  private static Seq<Seq<GeneTree>> stateRecorder = List.empty();
+  private static Map<Integer, Seq<GeneTree>> mutationStateRecorder = HashMap.empty();
+  private static Map<Integer, Seq<GeneTree>> breedingStateRecorder = HashMap.empty();
+
 
 
   /** Main entry point for the PrettyPictures web server. Args are ignored. */
@@ -108,6 +111,18 @@ public class PrettyPicturesServerWeek3 {
 //            response.status(300); // error!
 //            return stringToUTF8("Bad arguments");
 //          }
+
+          switch (testNumber) {
+            case 4:
+              //INSERT conditions
+              //INSERT lambda to get rid of get
+              testGenes = breedingStateRecorder.get(genNum).get();
+              break;
+            case 3:
+              //INSERT conditions
+              //Insert lambda to get rid of get
+              testGenes = mutationStateRecorder.get(genNum).get();
+          }
           var results =
               nanoBenchmarkVal(
                   () -> testGenes.get(imageNum).toImageFunction().toImage(width, height));
