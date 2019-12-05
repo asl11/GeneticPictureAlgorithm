@@ -309,20 +309,24 @@ public class PrettyPicturesServerWeek3 {
                   .onEmpty(() -> Log.e(TAG, () -> "failed to decode count: " + request.url()))
                   .getOrElse(1);
 
-
+          stateRecorder = HashMap.of(0, TestGenesWeek2.randomTrees(count));
+          totalGenerations = 1;
+          currentGeneration = 0;
+          testGenes = stateRecorder.get(0).get();
           testGenesLength = count;
+          testNumber = 0;
 
-          if (testNumber == 3) {
-            mutationStateRecorder = HashMap.of(0, new TestGenesWeek3(3).getGenes());
-            totalGenerationNumber_3 = 1;
-            currentGenerationNumber_3 = 0;
-            return customJsonResponse(totalGenerationNumber_3, currentGenerationNumber_3,testGenesLength);
-          } else if (testNumber == 4) {
-            breedingStateRecorder = HashMap.of(0, new TestGenesWeek3(4).getGenes());
-            totalGenerationNumber_4 = 0;
-            currentGenerationNumber_4 = 1;
-            return customJsonResponse(totalGenerationNumber_4, currentGenerationNumber_4,testGenesLength);
-          }
+//          if (testNumber == 3) {
+//            mutationStateRecorder = HashMap.of(0, new TestGenesWeek3(3).getGenes());
+//            totalGenerationNumber_3 = 1;
+//            currentGenerationNumber_3 = 0;
+//            return customJsonResponse(totalGenerationNumber_3, currentGenerationNumber_3,testGenesLength);
+//          } else if (testNumber == 4) {
+//            breedingStateRecorder = HashMap.of(0, new TestGenesWeek3(4).getGenes());
+//            totalGenerationNumber_4 = 0;
+//            currentGenerationNumber_4 = 1;
+//            return customJsonResponse(totalGenerationNumber_4, currentGenerationNumber_4,testGenesLength);
+//          }
       return customJsonResponse(1, 0, testGenesLength);
     });
 
