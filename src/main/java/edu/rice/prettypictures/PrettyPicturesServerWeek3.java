@@ -64,6 +64,9 @@ public class PrettyPicturesServerWeek3 {
   private static Map<Integer, Seq<GeneTree>> mutationStateRecorder = HashMap.empty();
   private static Map<Integer, Seq<GeneTree>> breedingStateRecorder = HashMap.empty();
 
+  private static Map<Integer, Seq<GeneTree>> stateRecorder = HashMap.empty();
+  private static int totalGenerations = 0;
+  private static int currentGeneration = 0;
 
 
   /** Main entry point for the PrettyPictures web server. Args are ignored. */
@@ -77,6 +80,7 @@ public class PrettyPicturesServerWeek3 {
 
     // Perform setup here
     final var week2db = new TestGenesWeek2("prettypictures-week2.json");
+
     // TODO: implement this handler
     /*
      * GET /image/gen/:gen/img/:img/height/:height/width/:width/
@@ -214,8 +218,8 @@ public class PrettyPicturesServerWeek3 {
                     breedingStateRecorder.get(currentGenerationNumber_4).get().length());
             case 3:
               if (mutationStateRecorder.isEmpty()) {
-                mutationStateRecorder = mutationStateRecorder.put(0,testGenes);
                 testGenes = new TestGenesWeek3(3).getGenes();//states of test 3
+                mutationStateRecorder = mutationStateRecorder.put(0,testGenes);
               }
                 return customJsonResponse(totalGenerationNumber_3,currentGenerationNumber_3,
                     mutationStateRecorder.get(currentGenerationNumber_3).get().length());
@@ -230,7 +234,7 @@ public class PrettyPicturesServerWeek3 {
           }
           testGenesLength = testGenes.length();
           //EDGE case, testgeneslength
-          return customJsonResponse(0, 1, testGenesLength);
+          return customJsonResponse(1, 0, testGenesLength);
         });
 
     // TODO: implement this handler
