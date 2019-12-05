@@ -56,8 +56,10 @@ public class PrettyPicturesServerWeek3 {
   private static Seq<GeneTree> testGenes = List.empty(); // mutated by the /test route
   private static int testGenesLength = 1; // mutated by the /test route
 
-  private static int totalGenerationNumber = 0; //mutated by the /test route
-  private static int currentGenerationNumber = 0; //mutated by the /test route
+  private static int totalGenerationNumber_3 = 0; //mutated by the /test route
+  private static int currentGenerationNumber_3 = 0; //mutated by the /test route
+  private static int totalGenerationNumber_4 = 0; //mutated by the /test route
+  private static int currentGenerationNumber_4 = 0; //mutated by the /test route
   private static Map<Integer, Seq<GeneTree>> mutationStateRecorder = HashMap.empty();
   private static Map<Integer, Seq<GeneTree>> breedingStateRecorder = HashMap.empty();
 
@@ -204,9 +206,16 @@ public class PrettyPicturesServerWeek3 {
           switch (testNumber) {
             case 4:
               testGenes = new TestGenesWeek3(4).getGenes();
+              if (breedingStateRecorder.isEmpty()) {
+                breedingStateRecorder.put(0,testGenes);
+              }
+
               break;
             case 3:
               testGenes = new TestGenesWeek3(3).getGenes();//states of test 3
+              if (mutationStateRecorder.isEmpty()) {
+                mutationStateRecorder.put(0,testGenes);
+              }
               break;
             case 2:
               // regenerate every time, makes testing a little easier
@@ -219,7 +228,7 @@ public class PrettyPicturesServerWeek3 {
           }
           testGenesLength = testGenes.length();
 
-          return customJsonResponse(1, 0, testGenesLength);
+          return customJsonResponse(0, 1, testGenesLength);
         });
 
     // TODO: implement this handler
@@ -300,7 +309,11 @@ public class PrettyPicturesServerWeek3 {
      * Create a new generation bred from generation :olggen using the images in *.
      * Return a JSON response as in POST /test/.
      */
+    post("/breed/oldgen/:oldgen/img/*",(request,response) -> {
+      Seq<String> imageList = List.of(request.splat()[0].split("/"));
 
+
+    });
     // You should not launch the client until all setup has been performed.
     launchBrowser("http://localhost:4567/prettyPicturesBreeder.html");
   }
