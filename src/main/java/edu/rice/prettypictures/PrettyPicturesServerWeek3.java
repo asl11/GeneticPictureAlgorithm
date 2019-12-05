@@ -86,14 +86,14 @@ public class PrettyPicturesServerWeek3 {
     // Perform setup here
     final var week2db = new TestGenesWeek2("prettypictures-week2.json");
     //file handling
-    if (Files.read("src/main/resources/prettypictures-week3.json").isSuccess()) {
-      String filedata = Files.read("src/main/resources/prettypictures-week3.json").get();
+    if (Files.read("prettypictures-week3.json").isSuccess() && !Files.read("prettypictures-week3.json").isEmpty()) {
+      String filedata = Files.read("prettypictures-week3.json").get();
       Map<String, Value> pictures = Parser.parseJsonObject(filedata).get().getMap();
       Seq<Tuple2<String,Value>> keyvalues = Parser.parseJsonObject(filedata).get().getContents();
       keyvalues.forEach(
           (tuple) -> {
             Seq<GeneTree> trees = tuple._2().asJArray().getSeq().map((json) -> GeneTree.of(json).get());
-            stateRecorder.put(Integer.parseInt(tuple._1()), trees);
+            stateRecorder = stateRecorder.put(Integer.parseInt(tuple._1()), trees);
           }
       );
       totalGenerations = pictures.keySet().length();
@@ -341,6 +341,7 @@ public class PrettyPicturesServerWeek3 {
         currentGeneration++;
         testGenes = new TestGenesWeek3(image1, image2, testGenesLength).getGenes();
         stateRecorder = stateRecorder.put(currentGeneration,testGenes);
+        writeToFile(stateRecorder);
         return customJsonResponse(totalGenerations,currentGeneration,testGenesLength);
       }
       if (testNumber == 4) {
@@ -371,7 +372,7 @@ public class PrettyPicturesServerWeek3 {
     launchBrowser("http://localhost:4567/prettyPicturesBreeder.html");
   }
 
-  private void writeToFile(Map<Integer, Seq<GeneTree>> input) {
+  private static void writeToFile(Map<Integer, Seq<GeneTree>> input) {
     Map<String,Value> newinput = input.mapValues(value -> (Value) Value.JArray.fromSeq(value.map(GeneTree::toJson)))
         .mapKeys(Object::toString);
     Files.write("prettypictures-week3.json",JObject.fromMap(newinput).toString());
