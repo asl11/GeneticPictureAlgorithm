@@ -47,17 +47,20 @@ answer these separately.
 **GeneTree / RandomGeneTree**
 - What were some similarities in how you defined your GeneTree last week and how our reference implementation works?
 
-  (Your answer.)
+  Similar to last week, the children and genes were stored as variables in the GeneTree Class. 
+  These variables also have the same type as their counterparts in this weeks implementation
   
 - What were some significant differences in how you defined your GeneTree last week?
 
-  (Your answer.)
+  Last week, I created a single function to generate a gene tree, whereas this week there are multiple gene tree geneerator implementions.
+  This makes the code for this week more readable than my code from last week.
   
 **Crossbreeding**
 - Last week, we asked you to think about how you would *crossbreed* two parent gene-trees together, getting a
   new child gene-tree. How does your idea from last week compare to our lens-based approach this week?
 
-  (Your answer.)
+  My idea from last week is very similar to our approach this week. I stated that we should recursively find a subtree to mutate and we did that.
+  However, my idea from last week did not involve getting a random lens. Rather I assumed we would simply recursively start from the top of the Gene Tree.
 
 ### Student 2 - Alex Li
 
