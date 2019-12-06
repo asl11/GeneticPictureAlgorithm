@@ -31,11 +31,11 @@ To make your graders lives easier, please answer these questions:
 1) Did you implement TEST 3 (mutants)? ( yes )
 2) Did you implement TEST 4 (crossbreeding)? ( yes )
 3) Where did you put your "ten favorite images" and their JSON genotypes? ( "favoritepictures.json" ) same directory as readme
-4) Where is the unit test that exercises your GeneTree lenses? ( directory/name/here )
-5) Where is the unit test that exercises your GeneTree mutation? ( directory/name/here )
-6) Where is the unit test that exercises your GeneTree crossbreeding? ( directory/name/here )
-7) Where are the unit tests that exercises your multi-generation database JSON loading and saving? ( src/test/java/edu/rice/prettypictures/FileHandlerTest.java )
-8) Where are the unit tests that exercises your multi-generation database's ability to fetch individual genes and create new generations? ( src/test/java/edu/rice/prettypictures/FileHandlerTest.java )
+4) Where is the unit test that exercises your GeneTree lenses? ( "src/test/java/edu/rice/prettypictures/TestGenesWeek3Test.java/" )
+5) Where is the unit test that exercises your GeneTree mutation? ( "src/test/java/edu/rice/prettypictures/TestGenesWeek3Test.java/"  )
+6) Where is the unit test that exercises your GeneTree crossbreeding? ( "src/test/java/edu/rice/prettypictures/TestGenesWeek3Test.java/"  )
+7) Where are the unit tests that exercises your multi-generation database JSON loading and saving? ( "src/test/java/edu/rice/prettypictures/FileHandlerTest.java/" )
+8) Where are the unit tests that exercises your multi-generation database's ability to fetch individual genes and create new generations? ("src/test/java/edu/rice/prettypictures/FileHandlerTest.java/" )
 
 ## Q&A
 
@@ -52,7 +52,7 @@ answer these separately.
   
 - What were some significant differences in how you defined your GeneTree last week?
 
-  Last week, I created a single function to generate a gene tree, whereas this week there are multiple gene tree geneerator implementions.
+  Last week, I created a single function to generate a gene tree, whereas this week there are multiple gene tree generator implementations.
   This makes the code for this week more readable than my code from last week.
   
 **Crossbreeding**
