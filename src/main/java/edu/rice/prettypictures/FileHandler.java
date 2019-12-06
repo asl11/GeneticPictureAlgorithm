@@ -13,11 +13,12 @@ public class FileHandler {
   Map<Integer, Seq<GeneTree>> storage;
   String path;
   private Random random = new Random();
+
   public FileHandler(String path) {
     this.path = path;
   }
 
-  public Map<Integer,Seq<GeneTree>> readFromFile() {
+  public Map<Integer, Seq<GeneTree>> readFromFile() {
     if (Files.read(path).isSuccess()
         && !Files.read(path).isEmpty()
         && Parser.parseJsonObject(Files.read(path).get()).isDefined()) {
@@ -42,13 +43,10 @@ public class FileHandler {
   }
 
   public Option<GeneTree> getTree(int genNum, int imageNum) {
-    return storage.get(genNum).fold(
-        Option::none,
-        treeList -> Option.of(treeList.get(imageNum))
-    );
+    return storage.get(genNum).fold(Option::none, treeList -> Option.of(treeList.get(imageNum)));
   }
 
-  public Map<Integer,Seq<GeneTree>> getStorage() {
+  public Map<Integer, Seq<GeneTree>> getStorage() {
     return this.storage;
   }
 
@@ -67,5 +65,4 @@ public class FileHandler {
     storage = storage.put(storage.keySet().length(), newGeneration);
     writeToFile(storage);
   }
-
 }
