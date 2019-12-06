@@ -34,8 +34,8 @@ To make your graders lives easier, please answer these questions:
 4) Where is the unit test that exercises your GeneTree lenses? ( directory/name/here )
 5) Where is the unit test that exercises your GeneTree mutation? ( directory/name/here )
 6) Where is the unit test that exercises your GeneTree crossbreeding? ( directory/name/here )
-7) Where are the unit tests that exercises your multi-generation database JSON loading and saving? ( directory/name/here )
-8) Where are the unit tests that exercises your multi-generation database's ability to fetch individual genes and create new generations? ( directory / name / here )
+7) Where are the unit tests that exercises your multi-generation database JSON loading and saving? ( src/test/java/edu/rice/prettypictures/FileHandlerTest.java )
+8) Where are the unit tests that exercises your multi-generation database's ability to fetch individual genes and create new generations? ( src/test/java/edu/rice/prettypictures/FileHandlerTest.java )
 
 ## Q&A
 
